@@ -5,7 +5,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-func DemoMiddleware() app.HandlerFunc {
+func Jwt() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		// pre-handle
 		// ...
