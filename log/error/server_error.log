@@ -1,0 +1,2 @@
+[2023-01-28 23:18:54.551]	FATAL	C:/Users/Lenovo/Desktop/tiktok/boot/database.go:18	initialize mysql db failed, err: Error 1049 (42000): Unknown database 'oj'
+[2023-01-29 00:21:00.587]	FATAL	C:/Users/Lenovo/Desktop/tiktok/boot/database.go:18	initialize mysql db failed, err: Error 1049 (42000): Unknown database 'oj'
