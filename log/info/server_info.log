@@ -17,3 +17,8 @@
 [2023-01-29 00:23:18.028]	INFO	C:/Users/Lenovo/Desktop/tiktok/boot/database.go:52	initialize verify redis client successfully
 [2023-01-29 00:23:18.029]	INFO	C:/Users/Lenovo/Desktop/tiktok/app/router/init.go:28	initialize routers successfully
 [2023-01-29 00:25:35.681]	INFO	C:/Users/Lenovo/Desktop/tiktok/boot/service.go:29	server running on :8080 ...
+[2023-01-29 00:48:16.079]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/logger.go:86	initialize logger successfully!
+[2023-01-29 00:48:22.524]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/database.go:31	initialize mysql db successfully
+[2023-01-29 00:48:22.646]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/database.go:52	initialize verify redis client successfully
+[2023-01-29 00:48:22.649]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/app/router/init.go:40	initialize routers successfully
+[2023-01-29 00:50:33.560]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/service.go:29	server running on :8080 ...
