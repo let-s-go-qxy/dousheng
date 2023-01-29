@@ -26,7 +26,7 @@ func InitRouter(h *server.Hertz) {
 	loggedGroup.GET("/user", api.UserInfo)
 	publicGroup.GET("/publish/action", api.GetFollowerList)
 	loggedGroup.GET("/publish/list", api.PublishList)
-	publicGroup.GET("/favorite/list", api.GetFollowerList)
+	publicGroup.GET("/favorite/list", api.GetFavoriteList)
 	publicGroup.GET("/comment/list", api.GetCommentList)      // 查看视频评论列表
 	loggedGroup.POST("/comment/action", api.GetCommentAction) // 修改视频评论
 	loggedGroup.POST("/relation/action", api.PublishVideo)
