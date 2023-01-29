@@ -39,3 +39,4 @@
 [2023-01-29 10:52:00.884]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:52	initialize verify redis client successfully
 [2023-01-29 10:52:00.885]	INFO	/Users/qidi/Desktop/camp/dousheng/app/router/init.go:40	initialize routers successfully
 [2023-01-29 10:56:14.498]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/service.go:29	server running on :8080 ...
+
