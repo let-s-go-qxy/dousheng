@@ -22,3 +22,18 @@
 [2023-01-29 00:48:22.646]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/database.go:52	initialize verify redis client successfully
 [2023-01-29 00:48:22.649]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/app/router/init.go:40	initialize routers successfully
 [2023-01-29 00:50:33.560]	INFO	C:/Users/Lenovo/Desktop/qxy/tiktok/boot/service.go:29	server running on :8080 ...
+[2023-01-29 10:48:05.413]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/logger.go:86	initialize logger successfully!
+[2023-01-29 10:48:05.781]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:31	initialize mysql db successfully
+[2023-01-29 10:48:05.920]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:52	initialize verify redis client successfully
+[2023-01-29 10:48:05.920]	INFO	/Users/qidi/Desktop/camp/dousheng/app/router/init.go:40	initialize routers successfully
+[2023-01-29 10:50:04.967]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/service.go:29	server running on :8080 ...
+[2023-01-29 10:50:05.543]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/logger.go:86	initialize logger successfully!
+[2023-01-29 10:50:05.923]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:31	initialize mysql db successfully
+[2023-01-29 10:50:06.069]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:52	initialize verify redis client successfully
+[2023-01-29 10:50:06.069]	INFO	/Users/qidi/Desktop/camp/dousheng/app/router/init.go:40	initialize routers successfully
+[2023-01-29 10:51:58.471]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/service.go:29	server running on :8080 ...
+[2023-01-29 10:52:00.361]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/logger.go:86	initialize logger successfully!
+[2023-01-29 10:52:00.743]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:31	initialize mysql db successfully
+[2023-01-29 10:52:00.884]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/database.go:52	initialize verify redis client successfully
+[2023-01-29 10:52:00.885]	INFO	/Users/qidi/Desktop/camp/dousheng/app/router/init.go:40	initialize routers successfully
+[2023-01-29 10:56:14.498]	INFO	/Users/qidi/Desktop/camp/dousheng/boot/service.go:29	server running on :8080 ...

@@ -19,7 +19,7 @@ func InitRouter(h *server.Hertz) {
 	loggedGroup := InitGroup(h, "", middleware.Jwt())
 
 	// 路由配置，跟上单独中间件 注意看好请求方法和是否需要登录
-	publicGroup.GET("/feed", api.GetFollowerList)
+	publicGroup.GET("/feed", api.GetFeedList)
 	loggedGroup.GET("/favorite/action", api.GetFollowerList)
 	publicGroup.GET("/user/register", api.GetFollowerList)
 	publicGroup.GET("/user/login", api.GetFollowerList)
