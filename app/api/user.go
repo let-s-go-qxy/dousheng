@@ -5,8 +5,13 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	g "tiktok/app/global"
+	"tiktok/app/internal/model"
 )
 
+// GetUserInfo 获取用户详情
 func GetUserInfo(c context.Context, ctx *app.RequestContext) {
-	ctx.JSON(consts.StatusOK, utils.H{"message": "pong"})
+	var users []model.User
+	g.MysqlDB.Find(&users)
+	ctx.JSON(consts.StatusOK, utils.H{"message": "pong", "data": users})
 }
