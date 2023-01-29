@@ -11,7 +11,7 @@ func main() {
 	boot.LoggerSetup()
 	// mysql  g.MysqlDB
 	boot.MysqlDBSetup()
-	// redis  g.DbVerify
+	// redis  g.DbVerify  g.DbUserLike  g.DbVideoLike
 	boot.RedisSetup()
 	// hertz  8080端口
 	boot.ServerSetup()
