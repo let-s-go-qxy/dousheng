@@ -26,7 +26,7 @@ func InitRouter(h *server.Hertz) {
 	publicGroup.GET("/user", api.GetUserInfo)
 	publicGroup.GET("/publish/action", api.GetFollowerList)
 	publicGroup.GET("/publish/list", api.GetFollowerList)
-	publicGroup.GET("/favorite/list", api.GetFollowerList)
+	publicGroup.GET("/favorite/list", api.GetFavoriteList)
 	publicGroup.GET("/comment/list", api.GetFollowerList)
 	publicGroup.GET("/comment/action", api.GetFollowerList)
 	publicGroup.GET("/relation/action", api.GetFollowerList)
