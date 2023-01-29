@@ -50,4 +50,35 @@ func RedisSetup() {
 	g.DbVerify = verifyDb
 
 	g.Logger.Info("initialize verify redis client successfully")
+
+	userLikeDb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", config.Addr, config.Port),
+		Username: "",
+		Password: config.Password,
+		DB:       config.DbUserLike,
+		PoolSize: 10000,
+	})
+	_, err = userLikeDb.Ping(ctx).Result()
+	if err != nil {
+		g.Logger.Fatalf("connect to userLike redis instance failed, err: %v", err)
+	}
+	g.DbUserLike = userLikeDb
+
+	g.Logger.Info("initialize userLike redis client successfully")
+
+	videoLikeDb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", config.Addr, config.Port),
+		Username: "",
+		Password: config.Password,
+		DB:       config.DbVideoLike,
+		PoolSize: 10000,
+	})
+	_, err = videoLikeDb.Ping(ctx).Result()
+	if err != nil {
+		g.Logger.Fatalf("connect to videoLike redis instance failed, err: %v", err)
+	}
+	g.DbVideoLike = videoLikeDb
+
+	g.Logger.Info("initialize videoLike redis client successfully")
+
 }

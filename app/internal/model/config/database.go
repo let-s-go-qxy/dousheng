@@ -41,8 +41,10 @@ func (m *Mongo) GetAddr() string {
 }
 
 type Redis struct {
-	Addr     string `mapstructure:"addr" yaml:"addr"`
-	Port     string `mapstructure:"port" yaml:"port"`
-	Password string `mapstructure:"password" yaml:"password"`
-	DbVerify int    `mapstructure:"dbVerify" yaml:"dbVerify"`
+	Addr        string `mapstructure:"addr" yaml:"addr"`
+	Port        string `mapstructure:"port" yaml:"port"`
+	Password    string `mapstructure:"password" yaml:"password"`
+	DbVerify    int    `mapstructure:"dbVerify" yaml:"dbVerify"`
+	DbUserLike  int    `mapstructure:"dbUserLike" yaml:"dbUserLike"`
+	DbVideoLike int    `mapstructure:"dbVideoLike" yaml:"dbVideoLike"`
 }

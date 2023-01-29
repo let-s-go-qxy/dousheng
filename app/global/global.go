@@ -12,6 +12,8 @@ var (
 	Config       *config.Config
 	Logger       *zap.SugaredLogger
 	MysqlDB      *gorm.DB
-	DbVerify     *redis.Client
 	RedisContext = context.Background()
+	DbVerify     *redis.Client
+	DbUserLike   *redis.Client
+	DbVideoLike  *redis.Client
 )
