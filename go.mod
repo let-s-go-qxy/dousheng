@@ -7,6 +7,7 @@ require (
 	github.com/cloudwego/hertz v0.5.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/jinzhu/copier v0.3.5
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.15.0
