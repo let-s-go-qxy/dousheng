@@ -21,15 +21,15 @@ func InitRouter(h *server.Hertz) {
 	// 路由配置，跟上单独中间件 注意看好请求方法和是否需要登录
 	publicGroup.GET("/feed", api.GetFeedList)
 	loggedGroup.GET("/favorite/action", api.GetFollowerList)
-	publicGroup.GET("/user/register", api.GetFollowerList)
-	publicGroup.GET("/user/login", api.GetFollowerList)
-	publicGroup.GET("/user", api.GetUserInfo)
+	publicGroup.POST("/user/register", api.UserRegister)
+	publicGroup.POST("/user/login", api.UserLogin)
+	loggedGroup.GET("/user", api.UserInfo)
 	publicGroup.GET("/publish/action", api.GetFollowerList)
-	publicGroup.GET("/publish/list", api.GetFollowerList)
-	publicGroup.GET("/favorite/list", api.GetFollowerList)
-	publicGroup.GET("/comment/list", api.GetFollowerList)
-	publicGroup.GET("/comment/action", api.GetFollowerList)
-	publicGroup.GET("/relation/action", api.GetFollowerList)
+	loggedGroup.GET("/publish/list", api.PublishList)
+	publicGroup.GET("/favorite/list", api.GetFavoriteList)
+	publicGroup.GET("/comment/list", api.GetCommentList)      // 查看视频评论列表
+	loggedGroup.POST("/comment/action", api.GetCommentAction) // 修改视频评论
+	loggedGroup.POST("/relation/action", api.PublishVideo)
 	publicGroup.GET("/relation/follow/list", api.GetFollowerList)
 	publicGroup.GET("/relation/follower/list", api.GetFollowerList)
 	publicGroup.GET("/relation/friend/list", api.GetFollowerList)
