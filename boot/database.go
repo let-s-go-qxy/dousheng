@@ -6,14 +6,27 @@ import (
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
+	"os"
 	g "tiktok/app/global"
 	"time"
 )
 
 func MysqlDBSetup() {
 	config := g.Config.DataBase.Mysql
-
-	db, err := gorm.Open(mysql.Open(config.GetDsn()))
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		logger.Config{
+			SlowThreshold:             time.Second, // 慢 SQL 阈值
+			LogLevel:                  logger.Info, // 日志级别
+			IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound（记录未找到）错误
+			Colorful:                  true,        // 彩色打印
+		},
+	)
+	db, err := gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{
+		Logger: newLogger,
+	})
 	if err != nil {
 		g.Logger.Fatalf("initialize mysql db failed, err: %v", err)
 	}

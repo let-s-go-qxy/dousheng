@@ -4,13 +4,9 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"gorm.io/gorm"
 	"strconv"
 	g "tiktok/app/global"
-	"tiktok/app/internal/model"
 	"tiktok/app/internal/service"
-	utils2 "tiktok/utils"
-	"time"
 )
 
 type UserLoginResponse struct {
@@ -26,26 +22,22 @@ type UserResponse struct {
 
 // UserInfo 获取用户详情
 func UserInfo(c context.Context, ctx *app.RequestContext) {
-	user := new(model.User)
+	user := new(User)
 	user.Id, _ = strconv.Atoi(ctx.Query("user_id"))
-	err := g.MysqlDB.First(&user).Error
+	var err error
+	myId, _ := ctx.Get("user_id")
+	_, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = service.UserInfo(myId.(int), user.Id)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "查询失败: " + err.Error(),
+			StatusMsg:  err.Error(),
 		})
 	}
 	ctx.JSON(consts.StatusOK, UserResponse{
 		Response: Response{
 			StatusCode: g.StatusCodeOk,
 		},
-		User: User{
-			Id:            user.Id,
-			Name:          user.Name,
-			FollowCount:   0, // TODO 等待数据库设计稳定后
-			FollowerCount: 0,
-			IsFollow:      false,
-		},
+		User: *user,
 	})
 }
 
@@ -53,44 +45,19 @@ func UserInfo(c context.Context, ctx *app.RequestContext) {
 func UserRegister(c context.Context, ctx *app.RequestContext) {
 	name := ctx.Query("username")
 	pw := ctx.Query("password")
-	// TODO 看一下password在app那边是不是限制6位以上
-	if len(name) > 32 || len(pw) > 32 || name == "" || len(pw) < 6 {
-		ctx.JSON(consts.StatusOK, Response{
-			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "账号或密码不符合要求",
-		})
-		return
-	}
-	salt := strconv.Itoa(int(time.Now().UnixNano()))
-	pw = utils2.GetMd5Str(pw + salt)
-	// 填装数据
-	user := &model.User{
-		Name:     name,
-		Password: pw,
-		Salt:     salt,
-	}
-	_, err := model.CreateUser(user)
-	// 创建失败
+	userId, token, err := service.UserRegister(name, pw)
 	if err != nil {
-		if err == g.ErrDbCreateUniqueKeyRepeatedly {
-			ctx.JSON(consts.StatusOK, Response{
-				StatusCode: g.StatusCodeFail,
-				StatusMsg:  "User already exist",
-			})
-			return
-		}
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "创建用户失败: " + err.Error(),
+			StatusMsg:  err.Error(),
 		})
-		return
 	}
 	ctx.JSON(consts.StatusOK, UserLoginResponse{
 		Response: Response{
 			StatusCode: g.StatusCodeOk,
 		},
-		UserId: user.Id,
-		Token:  service.GenerateToken(*user),
+		UserId: userId,
+		Token:  token,
 	})
 }
 
@@ -98,32 +65,11 @@ func UserRegister(c context.Context, ctx *app.RequestContext) {
 func UserLogin(c context.Context, ctx *app.RequestContext) {
 	name := ctx.Query("username")
 	pw := ctx.Query("password")
-	if len(name) > 32 || len(pw) > 32 || name == "" || len(pw) < 6 {
-		ctx.JSON(consts.StatusOK, Response{
-			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "账号或密码不符合要求",
-		})
-		return
-	}
-	user, err := model.GetUserByName(name)
+	userId, token, err := service.UserLogin(name, pw)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			ctx.JSON(consts.StatusOK, Response{
-				StatusCode: g.StatusCodeFail,
-				StatusMsg:  "账号或密码错误",
-			})
-			return
-		}
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "查询失败: " + err.Error(),
-		})
-		return
-	}
-	if utils2.GetMd5Str(pw+user.Salt) != user.Password {
-		ctx.JSON(consts.StatusOK, Response{
-			StatusCode: g.StatusCodeFail,
-			StatusMsg:  "账号或密码错误",
+			StatusMsg:  err.Error(),
 		})
 		return
 	}
@@ -131,7 +77,7 @@ func UserLogin(c context.Context, ctx *app.RequestContext) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserId: user.Id,
-		Token:  service.GenerateToken(*user),
+		UserId: userId,
+		Token:  token,
 	})
 }

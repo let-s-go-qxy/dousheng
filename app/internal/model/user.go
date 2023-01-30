@@ -25,8 +25,12 @@ func CreateUser(user *User) (db *gorm.DB, err error) {
 	return
 }
 
-func GetUserByName(name string) (user *User, err error) {
-	user = new(User)
-	err = g.MysqlDB.First(user, "name = ?", name).Error
+// GetUser 通过名称和user_id查询记录 limit 1
+func GetUser(user *User) (err error) {
+	if user.Name != "" {
+		err = g.MysqlDB.First(user, "name = ?", user.Name).Error
+		return
+	}
+	err = g.MysqlDB.First(user, "id = ?", user.Id).Error
 	return
 }
