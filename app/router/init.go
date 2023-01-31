@@ -20,7 +20,7 @@ func InitRouter(h *server.Hertz) {
 
 	// 路由配置，跟上单独中间件 注意看好请求方法和是否需要登录
 	publicGroup.GET("/feed", api.GetFeedList)
-	loggedGroup.GET("/favorite/action", api.GetFollowerList)
+	loggedGroup.GET("/favorite/action", api.FavoriteAction)
 	publicGroup.POST("/user/register", api.UserRegister)
 	publicGroup.POST("/user/login", api.UserLogin)
 	loggedGroup.GET("/user", api.UserInfo)

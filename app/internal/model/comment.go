@@ -1,9 +1,7 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	g "tiktok/app/global"
-	"time"
 )
 
 type Comment struct {
@@ -15,16 +13,19 @@ type Comment struct {
 	Cancel     int    `gorm:"default:1"`
 }
 
-func FindCommentByVideo(id *gorm.DB) []Comment {
+func FindCommentByVideo(id int) []Comment {
 	comments := make([]Comment, 0)
 	g.MysqlDB.Where("video_id = ?", id).Find(&comments)
 	return comments
 }
 
+func FindCommentById(id int) (comment Comment) {
+	g.MysqlDB.Where("id = ?", id).Find(&comment)
+	return comment
+}
+
 // comment表内插入对应评论
 func CreateComment(comment Comment) {
-	// 设定创建时间
-	comment.CreateTime = time.Now().Format("01-02")
 	g.MysqlDB.Create(comment)
 }
 

@@ -17,6 +17,18 @@ type Video struct {
 	Title       string `gorm:"column:title;not null" json:"title"`
 }
 
+// RespVideo 喜爱的视频返回模型
+type RespVideo struct {
+	Id            int    `json:"id,omitempty"`
+	Author        Author `json:"author"`
+	PlayUrl       string `json:"play_url" json:"play_url,omitempty"`
+	CoverUrl      string `json:"cover_url,omitempty"`
+	FavoriteCount int    `json:"favorite_count,omitempty"`
+	CommentCount  int    `json:"comment_count,omitempty"`
+	IsFavorite    bool   `json:"is_favorite,omitempty"`
+	Title         string `json:"title,omitempty"`
+}
+
 // TableName Video's table name
 func (*Video) TableName() string {
 	return TableNameVideo
