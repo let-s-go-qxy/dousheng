@@ -21,6 +21,9 @@ func ParseToken(str string) (UserClaims, error) {
 	token, err := jwt.ParseWithClaims(str, c, func(token *jwt.Token) (interface{}, error) {
 		return []byte(g.Config.Auth.Jwt.SecretKey), nil
 	})
+	if err != nil {
+		return *c, errors.New("token不合法")
+	}
 	if token.Valid != true {
 		return *c, errors.New("token不合法")
 	}
