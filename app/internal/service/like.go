@@ -54,11 +54,11 @@ func GetVideosAuthor(userId int, videoList []repository.Video) (videosAuthor map
 	videosAuthor = map[int]repository.Author{}
 	for _, video := range videoList {
 		author := repository.Author{}
-		author.Id = int(video.AuthorId)
+		author.Id = int(video.Author)
 		author.Name = repository.GetNameById(author.Id)
-		author.FollowCount = int(follow.GetFollowCount(int(video.AuthorId)))
-		author.FollowerCount = int(follow.GetFollowerCount(int(video.AuthorId)))
-		author.IsFollow = follow.IsFollowed(userId, int(video.AuthorId))
+		author.FollowCount = int(repository.GetFollowCount(int(video.Author)))
+		author.FollowerCount = int(repository.GetFollowerCount(int(video.Author)))
+		author.IsFollow = follow.IsFollowed(userId, int(video.Author))
 		videosAuthor[int(video.Id)] = author
 	}
 	return
