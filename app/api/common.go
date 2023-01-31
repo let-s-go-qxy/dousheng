@@ -10,8 +10,8 @@ type Response struct {
 type User struct {
 	Id            int    `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
-	FollowCount   int    `json:"follow_count,omitempty"`
-	FollowerCount int    `json:"follower_count,omitempty"`
+	FollowCount   int    `json:"follow_count"`
+	FollowerCount int    `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow"`
 }
 

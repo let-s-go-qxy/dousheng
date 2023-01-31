@@ -20,17 +20,28 @@ func GetFavoriteList(c context.Context, ctx *app.RequestContext) {
 	if err != nil {
 		global.Logger.Error("用户ID错误")
 	}
-	videoList, videoFavoriteCount := service.GetFavoriteList(uid)
+	videoList, videosFavoriteCount, videosAuthor := service.GetFavoriteList(uid)
 	println(len(videoList))
 	respVideoList := make([]Video, 0)
 	for _, video := range videoList {
 		respVideo := Video{}
 		copier.Copy(&respVideo, &video)
-		respVideo.FavoriteCount = videoFavoriteCount[int(video.Id)]
+		respVideo.FavoriteCount = videosFavoriteCount[int(video.Id)]
+
+		user := User{}
+		author := videosAuthor[int(video.Id)]
+		copier.Copy(&user, &author)
+
+		respVideo.Author = user
 		respVideo.IsFavorite = true
 		respVideoList = append(respVideoList, respVideo)
 	}
 
 	resp := FavoriteListResponse{StatusCode: consts.StatusOK, StatusMsg: "返回成功", VideoList: respVideoList}
 	ctx.JSON(consts.StatusOK, resp)
+}
+
+// FavoriteAction 点赞和取消点赞操作
+func FavoriteAction(c context.Context, ctx *app.RequestContext) {
+
 }

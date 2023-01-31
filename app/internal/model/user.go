@@ -30,3 +30,9 @@ func GetUserByName(name string) (user *User, err error) {
 	err = g.MysqlDB.First(user, "name = ?", name).Error
 	return
 }
+
+func GetNameById(userId int) string {
+	var user User
+	g.MysqlDB.Where("id = ?", userId).Take(&user)
+	return user.Name
+}
