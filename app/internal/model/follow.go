@@ -49,8 +49,5 @@ func GetFollowerCount(followId int) (count int64) {
 
 func IsFollow(userId, followId int) bool {
 	err := g.MysqlDB.First(&Follow{}, "user_id = ? AND follow_id = ? AND cancel = ?", userId, followId, 1).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
