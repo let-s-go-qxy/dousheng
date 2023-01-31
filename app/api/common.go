@@ -10,8 +10,8 @@ type Response struct {
 type User struct {
 	Id            int    `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
-	FollowCount   int    `json:"follow_count,omitempty"`
-	FollowerCount int    `json:"follower_count,omitempty"`
+	FollowCount   int    `json:"follow_count"`
+	FollowerCount int    `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow"`
 }
 
@@ -48,4 +48,10 @@ type MessageSendEvent struct {
 type MessagePushEvent struct {
 	FromUserId int    `json:"user_id,omitempty"`
 	MsgContent string `json:"msg_content,omitempty"`
+}
+
+type FavoriteListResponse struct {
+	StatusCode int32   `json:"status_code"`
+	StatusMsg  string  `json:"status_msg,omitempty"`
+	VideoList  []Video `json:"video_list"`
 }
