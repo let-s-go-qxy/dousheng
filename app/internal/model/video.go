@@ -2,6 +2,7 @@ package model
 
 import (
 	"sync"
+	g "tiktok/app/global"
 )
 
 const TableNameVideo = "video"
@@ -9,7 +10,7 @@ const TableNameVideo = "video"
 // Video mapped from table <video>
 type Video struct {
 	Id          int32  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	AuthorId    int32  `gorm:"column:author_id;not null" json:"author_id"`
+	Author      int32  `gorm:"column:author_id;not null" json:"author"`
 	PlayUrl     string `gorm:"column:play_url;not null" json:"play_url"`
 	CoverUrl    string `gorm:"column:cover_url;not null" json:"cover_url"`
 	PublishTime int32  `gorm:"column:publish_time;not null" json:"time"`
@@ -50,6 +51,12 @@ func init() {
 func (*VideoDaoStruct) PublishVideo(userID int, title string, videoNumID string) bool {
 
 	return true
-  
- }
 
+}
+
+func GetPublicList(userId int) (videoList []Video) {
+	g.MysqlDB.Model(&Video{}).
+		Where("videos.author= ? ", userId).
+		Scan(&videoList)
+	return
+}
