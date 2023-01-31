@@ -56,7 +56,7 @@ func (*VideoDaoStruct) PublishVideo(userID int, title string, videoNumID string)
 
 func GetPublicList(userId int) (videoList []Video) {
 	g.MysqlDB.Model(&Video{}).
-		Where("videos.author= ? ", userId).
+		Where("videos.author_id= ? ", userId).
 		Scan(&videoList)
 	return
 }
