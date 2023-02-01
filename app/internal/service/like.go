@@ -1,29 +1,65 @@
 package service
 
 import (
-	"strconv"
+	"github.com/jinzhu/copier"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
-	"time"
 )
 
-// GetFavoriteList 查询用户喜欢视频列表,及每个视频的点赞数
-func GetFavoriteList(userId int) (videoList []repository.Video, videoFavoriteCount map[int]int) {
-	var videoIdList []int
-	exist := g.DbVideoLike.SIsMember(g.RedisContext, "userSet", userId).Val()
-	//缓存不存在
-	if !exist {
-		// 1、从like表中查询出喜欢的视频ID列表
-		videoIdList = repository.GetFavoriteVideoIdList(userId)
-		// 2、将喜欢视频ID列表缓存到redis中
-		g.DbVideoLike.SAdd(g.RedisContext, "userSet", userId)
-		g.DbVideoLike.Set(g.RedisContext, strconv.Itoa(userId), videoIdList, time.Hour*24) //缓存时间设置？
+var (
+	like   repository.Like
+	follow repository.Follow
+)
+
+func FavoriteAction(userId int, videoId int, action int) bool {
+	if action == g.FavoriteAction {
+		// 点赞操作
+		like.CacheInsertLike(userId, videoId)
+		return true
+	} else if action == g.CancelFavoriteAction {
+		//取消点赞操作
+		like.CacheDeleteLike(userId, videoId)
+		return true
+	} else {
+		//点赞参数不对，错误处理
+		return false
 	}
-	// 缓存存在,获取视频缓存Id列表
-	videoIdList = repository.GetFavoriteVideoIdList(userId)
+}
+
+// GetFavoriteList 查询用户喜欢视频列表,及每个视频的点赞数
+func GetFavoriteList(userId int) (respVideoList []repository.RespVideo) {
+	//用户喜欢的视频ID列表
+	videoIdList := like.GetFavoriteVideoIdList(userId)
 	// 获取每个视频点赞数
-	videoFavoriteCount = repository.GetVideoFavoriteCount(videoIdList)
+	videoFavoriteCount := like.GetVideosFavoriteCount(videoIdList)
 	//从数据库获取视频列表
-	videoList = GetVideoListByIdList(videoIdList)
+	videoList := GetVideoListByIdList(videoIdList)
+	// 获取每个视频对应的发布者
+	videosAuthor := GetVideosAuthor(userId, videoList)
+
+	//封装返回视频RespVideo列表
+	for _, video := range videoList {
+		respVideo := repository.RespVideo{}
+		copier.Copy(&respVideo, &video)
+		respVideo.FavoriteCount = videoFavoriteCount[int(video.Id)]
+		respVideo.Author = videosAuthor[int(video.Id)]
+		respVideo.IsFavorite = true
+		respVideoList = append(respVideoList, respVideo)
+	}
+
+	return
+}
+
+func GetVideosAuthor(userId int, videoList []repository.Video) (videosAuthor map[int]repository.Author) {
+	videosAuthor = map[int]repository.Author{}
+	for _, video := range videoList {
+		author := repository.Author{}
+		author.Id = int(video.Author)
+		author.Name = repository.GetNameById(author.Id)
+		author.FollowCount = int(repository.GetFollowCount(int(video.Author)))
+		author.FollowerCount = int(repository.GetFollowerCount(int(video.Author)))
+		author.IsFollow = follow.IsFollowed(userId, int(video.Author))
+		videosAuthor[int(video.Id)] = author
+	}
 	return
 }
