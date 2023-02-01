@@ -35,6 +35,16 @@ func GetFollowsByUserId(userId int) (arr []int) {
 	return
 }
 
+// GetFollowerUserId 查看所有粉丝的id
+func GetFollowerUserId(userId int) (arr []int) {
+	follower := new([]Follow)
+	g.MysqlDB.Find(follower, "follow_id = ? AND cancel = ?", userId, 1)
+	for _, follow := range *follower {
+		arr = append(arr, follow.UserId)
+	}
+	return //返回粉丝列表
+}
+
 // GetFollowCount 获取当前用户的关注人数
 func GetFollowCount(userId int) (count int64) {
 	g.MysqlDB.Model(&Follow{}).Where("user_id = ? AND cancel = ?", userId, 1).Count(&count)

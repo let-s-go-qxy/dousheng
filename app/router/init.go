@@ -24,17 +24,17 @@ func InitRouter(h *server.Hertz) {
 	publicGroup.POST("/user/register", api.UserRegister)
 	publicGroup.POST("/user/login", api.UserLogin)
 	loggedGroup.GET("/user", api.UserInfo)
-	publicGroup.GET("/publish/action", api.GetFollowerList)
-	loggedGroup.GET("/publish/list", api.PublishList) 			//发布列表
+	publicGroup.GET("/publish/action", api.GetFollowList) //关注用户
+	loggedGroup.GET("/publish/list", api.PublishList)     //发布列表
 	publicGroup.GET("/favorite/list", api.GetFavoriteList)
 	publicGroup.GET("/comment/list", api.GetCommentList)       // 查看视频评论列表
 	loggedGroup.POST("/comment/action", api.PostCommentAction) // 修改视频评论
 	loggedGroup.POST("/relation/action", api.PublishVideo)
-	loggedGroup.GET("/relation/follow/list", api.GetFollowerList)
-	loggedGroup.GET("/relation/follower/list", api.GetFollowerList)
-	loggedGroup.GET("/relation/friend/list", api.GetFollowerList)
-	publicGroup.GET("/message/chat", api.GetFollowerList)
-	publicGroup.GET("/message/action", api.GetFollowerList)
+	loggedGroup.GET("/relation/follow/list", api.GetFollowerList) //查看用户关注列表
+	loggedGroup.GET("/relation/follower/list", api.GetFollowList) //查看用户粉丝列表
+	loggedGroup.GET("/relation/friend/list", api.GetFollowList)   //查看用户朋友列表
+	publicGroup.GET("/message/chat", api.GetFollowList)
+	publicGroup.GET("/message/action", api.GetFollowList)
 
 	// 路由注册成功log
 	g.Logger.Infof("initialize routers successfully")

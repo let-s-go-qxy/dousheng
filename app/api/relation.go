@@ -46,3 +46,37 @@ func GetFollowerList(c context.Context, ctx *app.RequestContext) {
 		UserList: followUsers,
 	})
 }
+
+// GetFollowList 获取粉丝列表
+func GetFollowList(c context.Context, ctx *app.RequestContext) {
+	userId, _ := strconv.Atoi(ctx.Query("user_id"))
+	followerId, err := service.GetFollowList(userId)
+	followerUsers := make([]User, 0)
+	for _, id := range followerId {
+		user := &User{
+			Id: id,
+		}
+		myId, _ := ctx.Get("user_id")
+		user.Id, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = service.UserInfo(myId.(int), user.Id)
+		if err != nil {
+			break
+		}
+		followerUsers = append(followerUsers, *user)
+	}
+	if err != nil {
+		ctx.JSON(consts.StatusOK, UserListResponse{
+			Response: Response{
+				statuscode: 1,
+				StatusMsg:  err.Error(),
+			},
+		})
+		return
+	}
+	ctx.JSON(consts.StatusOK, UserListResponse{
+		Response: Response{
+			statuscode: 0,
+			StatusMsg:  "ok",
+		},
+		UserList: followerUsers,
+	})
+}
