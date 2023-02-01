@@ -7,10 +7,9 @@ import (
 	"os/exec"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
+	"tiktok/manifest/ossRelated"
 	utils "tiktok/utils/file"
 )
-
-const LocalFolderPath = "/Volumes/NV1/picture/"
 
 func PublishVideo(userID int, title string, fileBytes []byte) (success bool) {
 
@@ -30,12 +29,12 @@ func PublishVideo(userID int, title string, fileBytes []byte) (success bool) {
 	pictureName := fileID + ".jpg"
 
 	//封面图和视频在本地的保存路径
-	picturePath := LocalFolderPath + pictureName
-	videoPath := LocalFolderPath + videoName
+	picturePath := ossRelated.LocalFolderPath + pictureName
+	videoPath := ossRelated.LocalFolderPath + videoName
 
 	//将上传的文件流的形式以mp4的形式保存到本地，并将视频的第一帧作为封面图导出到，picturePath下
 	ioutil.WriteFile(videoPath, fileBytes, 0666)
-	cmd := exec.Command("/Library/ffmpeg/ffmpeg", "-i", videoPath, "-y", "-f", "image2", "-ss", "1", picturePath)
+	cmd := exec.Command(ossRelated.FfmpegPath, "-i", videoPath, "-y", "-f", "image2", "-ss", "1", picturePath)
 	//buf := new(bytes.Buffer)
 	//cmd.Stdout = buf
 	cmd.Run()
@@ -51,11 +50,6 @@ func PublishVideo(userID int, title string, fileBytes []byte) (success bool) {
 		g.Logger.Infof("读取picture文件时发生了错误")
 	}
 
-	//err := cmd.Run()
-	//if err != nil {
-	//	utils.Log.Error("ffmpeg运行错误 " + err.Error())
-	//	success = false
-	//}
 	// 将视频封面上传至OSS中
 	if !utils.UploadFile(pictureBytes, fileID, "picture") {
 		success = false

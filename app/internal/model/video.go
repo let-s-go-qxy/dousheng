@@ -61,16 +61,22 @@ func init() {
 }
 
 func (*VideoDaoStruct) PublishVideo(userID int, title string, videoNumID string) bool {
-
+	video := Video{
+		Author:   int32(userID),
+		PlayUrl:  videoNumID,
+		CoverUrl: videoNumID,
+		Title:    title,
+	}
+	g.MysqlDB.Table("videos").Debug().Create(&video)
 	return true
 
 }
 
 func GetPublicList(userId int) (videoList []Video) {
-	
+
 	g.MysqlDB.Table("videos").
 		Where("author_id= ? ", userId).
 		Scan(&videoList)
-		println(videoList)
+	println(videoList)
 	return
 }

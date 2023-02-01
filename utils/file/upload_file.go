@@ -5,6 +5,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"sync"
 	g "tiktok/app/global"
+	"tiktok/manifest/ossRelated"
 )
 
 var bucket *oss.Bucket
@@ -14,16 +15,16 @@ var once sync.Once
 func OSSInit() {
 	once.Do(func() {
 		// 连接OSS账户
-		client, err1 := oss.New("http://oss-cn-qingdao.aliyuncs.com", "LTAI5tAEcDgKyj3cDSCinsdR", "KeQRfcAkcG7bDwCyrgAl0boeaW8arU")
+		client, err := oss.New(ossRelated.EndPoint, ossRelated.AccessKeyID, ossRelated.AccessKeySecret)
 
-		if err1 != nil {
-			g.Logger.Infof("连接OSS账户失败" + err1.Error())
+		if err != nil {
+			g.Logger.Infof("连接OSS账户失败" + err.Error())
 		} else { // OSS账户连接成功
-			var err2 error
+
 			// 连接存储空间
-			bucket, err2 = client.Bucket("camp-dou-sheng")
-			if err2 != nil {
-				g.Logger.Infof("连接存储空间失败" + err2.Error())
+			bucket, err = client.Bucket("camp-dou-sheng")
+			if err != nil {
+				g.Logger.Infof("连接存储空间失败" + err.Error())
 			} else { // 存储空间连接成功
 				g.Logger.Infof("OSS初始化完成")
 			}
