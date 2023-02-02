@@ -6,7 +6,7 @@ type Follow struct {
 	Id       int `gorm:"primaryKey" json:"id"`
 	UserId   int `json:"user_id"`
 	FollowId int `json:"follow_id"`
-	cancel   int `json:"cancel"`
+	Cancel   int `json:"cancel"`
 }
 
 // Author 用户返回模型
@@ -16,13 +16,6 @@ type Author struct {
 	FollowCount   int    `json:"follow_count,omitempty"`
 	FollowerCount int    `json:"follower_count,omitempty"`
 	IsFollow      bool   `json:"is_follow"`
-}
-
-// IsFollowed user是否关注另外一个user
-func (follow *Follow) IsFollowed(userId int, followId int) bool {
-	var count int64
-	g.MysqlDB.Where("user_id = ? and follow_id = ?", userId, followId).Count(&count)
-	return count > 0
 }
 
 // GetFollowsByUserId  查所有的被关注者的id
