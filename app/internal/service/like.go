@@ -11,6 +11,7 @@ var (
 	follow repository.Follow
 )
 
+// FavoriteAction 点赞和取消点赞操作
 func FavoriteAction(userId int, videoId int, action int) bool {
 	if action == g.FavoriteAction {
 		// 点赞操作
@@ -29,7 +30,7 @@ func FavoriteAction(userId int, videoId int, action int) bool {
 // GetFavoriteList 查询用户喜欢视频列表,及每个视频的点赞数
 func GetFavoriteList(userId int) (respVideoList []repository.RespVideo) {
 	//用户喜欢的视频ID列表
-	videoIdList := like.GetFavoriteVideoIdList(userId)
+	videoIdList := like.GetUserFavoriteVideoList(userId)
 	// 获取每个视频点赞数
 	videoFavoriteCount := like.GetVideosFavoriteCount(videoIdList)
 	//从数据库获取视频列表
@@ -58,7 +59,7 @@ func GetVideosAuthor(userId int, videoList []repository.Video) (videosAuthor map
 		author.Name = repository.GetNameById(author.Id)
 		author.FollowCount = int(repository.GetFollowCount(int(video.Author)))
 		author.FollowerCount = int(repository.GetFollowerCount(int(video.Author)))
-		author.IsFollow = follow.IsFollowed(userId, int(video.Author))
+		author.IsFollow = repository.IsFollow(userId, int(video.Author))
 		videosAuthor[int(video.Id)] = author
 	}
 	return
