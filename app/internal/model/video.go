@@ -21,7 +21,7 @@ type Video struct {
 type RespVideo struct {
 	Id            int    `json:"id,omitempty"`
 	Author        Author `json:"author"`
-	PlayUrl       string `json:"play_url" json:"play_url,omitempty"`
+	PlayUrl       string `json:"play_url,omitempty"`
 	CoverUrl      string `json:"cover_url,omitempty"`
 	FavoriteCount int    `json:"favorite_count,omitempty"`
 	CommentCount  int    `json:"comment_count,omitempty"`
@@ -72,11 +72,12 @@ func (*VideoDaoStruct) PublishVideo(userID int, title string, videoNumID string)
 
 }
 
+// 通过用户id查询video数组
 func GetPublicList(userId int) (videoList []Video) {
 
 	g.MysqlDB.Table("videos").
 		Where("author_id= ? ", userId).
 		Scan(&videoList)
-	println(videoList)
+
 	return
 }
