@@ -33,7 +33,9 @@ func FavoriteAction(c context.Context, ctx *app.RequestContext) {
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
 	res := like.FavoriteAction(userId.(int), videoId, actionType)
 	if res {
-		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionSuccess)
+		ctx.JSON(consts.StatusOK,
+			Response{0,
+				"点赞成功"})
 	} else {
 		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionFail)
 	}

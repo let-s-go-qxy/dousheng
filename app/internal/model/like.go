@@ -26,9 +26,9 @@ type Like struct {
 // InsertLike 插入一条点赞记录
 func (like *Like) InsertLike(userId int, videoId int) {
 	var existsLike Like
-	result := g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Find(&existsLike)
+	result := g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).First(&existsLike)
 	aLike := Like{UserId: userId, VideoId: videoId, Cancel: g.FavoriteAction}
-	if result.Error != nil {
+	if result.Error == gorm.ErrRecordNotFound {
 		g.MysqlDB.Select("user_id", "video_id", "cancel").Create(&aLike)
 	} else {
 		like.UpdateLike(userId, videoId, g.FavoriteAction)
@@ -37,7 +37,10 @@ func (like *Like) InsertLike(userId int, videoId int) {
 
 // UpdateLike DeleteLike 更新一条点赞记录
 func (like *Like) UpdateLike(userId int, videoId int, cancel int) {
-	g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Update("cancel", cancel)
+
+	g.MysqlDB.Model(like).Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Updates(map[string]interface{}{
+		"cancel": cancel,
+	})
 }
 
 // CacheInsertLike InsertLike 插入一条cache点赞记录

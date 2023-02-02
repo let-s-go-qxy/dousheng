@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"strconv"
@@ -40,6 +41,7 @@ func GetFeedList(c context.Context, ctx *app.RequestContext) {
 			}, NextTime: lastTime,
 		})
 	} else if state == 1 {
+		fmt.Println("----->>", videoInfo[0].Author)
 		ctx.JSON(http.StatusOK, &model.GetVideoResponse{
 			Response: common.Response{
 				StatusCode: 0,

@@ -2,6 +2,9 @@ package video
 
 import (
 	"tiktok/app/internal/model"
+	"tiktok/app/internal/service/comment"
+	"tiktok/app/internal/service/like"
+	"tiktok/manifest/ossRelated"
 
 	"github.com/jinzhu/copier"
 )
@@ -31,6 +34,12 @@ func PlusAuthor(userId int, videoList []model.Video) (respVideoList []model.Resp
 		author.FollowerCount = int(model.GetFollowerCount(int(video.Author)))
 		author.IsFollow = model.IsFollow(userId, int(video.Author))
 		copier.Copy(&respVideo.Author, &author)
+		respVideo.PlayUrl = ossRelated.OSSPreURL + respVideo.PlayUrl + ".mp4"
+		respVideo.CoverUrl = ossRelated.OSSPreURL + respVideo.CoverUrl + ".jpg"
+
+		_, respVideo.CommentCount = comment.GetCommentList(int(respVideo.Id))
+		respVideo.FavoriteCount = len(like.GetFavoriteList(int(respVideo.Id)))
+		respVideo.IsFavorite = like.IsLike(int(userId), int(respVideo.Id))
 
 		respVideoList = append(respVideoList, respVideo)
 	}

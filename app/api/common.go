@@ -17,14 +17,14 @@ type User struct {
 
 // Video 视频返回模型
 type Video struct {
-	Id            int    `json:"id,omitempty"`
+	Id            int    `json:"id"`
 	Author        User   `json:"author"`
-	PlayUrl       string `json:"play_url,omitempty"`
-	CoverUrl      string `json:"cover_url,omitempty"`
-	FavoriteCount int    `json:"favorite_count,omitempty"`
-	CommentCount  int    `json:"comment_count,omitempty"`
-	IsFavorite    bool   `json:"is_favorite,omitempty"`
-	Title         string `json:"title,omitempty"`
+	PlayUrl       string `json:"play_url"`
+	CoverUrl      string `json:"cover_url"`
+	FavoriteCount int    `json:"favorite_count"`
+	CommentCount  int    `json:"comment_count"`
+	IsFavorite    bool   `json:"is_favorite"`
+	Title         string `json:"title"`
 }
 
 type Comment struct {

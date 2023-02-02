@@ -18,6 +18,7 @@ var (
 
 // 点赞和取消点赞
 var (
-	FavoriteAction       = 1 //点赞
-	CancelFavoriteAction = 0 //取消点赞
+	CancelFavoriteAction        = 0 //取消点赞
+	FavoriteAction              = 1 //点赞
+	RequestCancelFavoriteAction = 2
 )
