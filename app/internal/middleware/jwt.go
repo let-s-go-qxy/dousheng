@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"tiktok/app/api"
@@ -12,7 +11,6 @@ import (
 
 func Jwt() app.HandlerFunc {
 	return func(c context.Context, ctx *app.RequestContext) {
-		fmt.Println("jwt")
 		token := ctx.Query("token")
 		if token2 := ctx.PostForm("token"); token2 != "" {
 			token = token2
@@ -41,5 +39,17 @@ func Jwt() app.HandlerFunc {
 		//	}
 		//}
 		ctx.Next(c)
+	}
+}
+
+func ParseToken() app.HandlerFunc {
+	return func(c context.Context, ctx *app.RequestContext) {
+		token := ctx.Query("token")
+		if token != "" {
+			claims, err := user.ParseToken(token)
+			if err == nil {
+				ctx.Set("user_id", claims.Id)
+			}
+		}
 	}
 }

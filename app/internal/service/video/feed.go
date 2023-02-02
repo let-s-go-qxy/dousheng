@@ -9,7 +9,7 @@ import (
 	"tiktok/manifest/ossRelated"
 )
 
-func GetVideoFeed(lastTime int64, userID int32, myID int) (nextTime int64, videoInfo []model.TheVideoInfo, state int) {
+func GetVideoFeed(lastTime int64, userID int32) (nextTime int64, videoInfo []model.TheVideoInfo, state int) {
 	// state 0:已经没有视频了  1:获取成功  -1:获取失败
 
 	allVideoInfoData, isExist := model.VideoDao.GetVideoFeed(int32(lastTime))
@@ -30,11 +30,10 @@ func GetVideoFeed(lastTime int64, userID int32, myID int) (nextTime int64, video
 			var followerCount, followCount, commentCount, favoriteCount int
 
 			var isFollow, isFavorite bool
-
-			_, followCount, followerCount, _, isFollow, _ = user.UserInfo(myID, int(videoInfoData.UserID))
+			_, followCount, followerCount, _, isFollow, _ = user.UserInfo(int(userID), int(videoInfoData.UserID))
 			_, commentCount = comment.GetCommentList(int(videoInfoData.VideoID))
 			favoriteCount = len(like.GetFavoriteList(int(videoInfoData.VideoID)))
-			isFavorite = like.IsLike(myID, int(videoInfoData.VideoID))
+			isFavorite = like.IsLike(int(userID), int(videoInfoData.VideoID))
 
 			videoInfo[index] = model.TheVideoInfo{
 				ID: videoInfoData.VideoID,

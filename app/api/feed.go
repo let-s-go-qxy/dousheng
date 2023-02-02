@@ -25,13 +25,8 @@ func GetFeedList(c context.Context, ctx *app.RequestContext) {
 	if lastTime == 0 {
 		lastTime = time.Now().Unix()
 	}
-	// myId
-	myId, _ := ctx.Get("user_id")
-	if myId == nil {
-		myId = 0
-	}
 	// 需要获取NextTime、VideoList
-	nextTime, videoInfo, state := video.GetVideoFeed(lastTime, userID, myId.(int))
+	nextTime, videoInfo, state := video.GetVideoFeed(lastTime, userID)
 
 	if state == 0 {
 		ctx.JSON(http.StatusOK, &model.GetVideoResponse{
