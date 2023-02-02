@@ -11,8 +11,8 @@ import (
 var bucket *oss.Bucket
 var once sync.Once
 
-// OSSInit 初始化，将ConnQuery与数据库绑定
-func OSSInit() {
+// OSSInit 初始
+func OSSInit() *oss.Bucket {
 	once.Do(func() {
 		// 连接OSS账户
 		client, err := oss.New(ossRelated.EndPoint, ossRelated.AccessKeyID, ossRelated.AccessKeySecret)
@@ -22,7 +22,7 @@ func OSSInit() {
 		} else { // OSS账户连接成功
 
 			// 连接存储空间
-			bucket, err = client.Bucket("camp-dou-sheng")
+			bucket, err = client.Bucket(ossRelated.BucketName)
 			if err != nil {
 				g.Logger.Infof("连接存储空间失败" + err.Error())
 			} else { // 存储空间连接成功
@@ -30,6 +30,7 @@ func OSSInit() {
 			}
 		}
 	})
+	return bucket
 }
 
 func UploadFile(file []byte, filename string, fileType string) bool {
@@ -42,6 +43,8 @@ func UploadFile(file []byte, filename string, fileType string) bool {
 		g.Logger.Infof("无法上传" + fileType + "类型文件")
 		return false
 	}
+	//初始化bucket
+	bucket = OSSInit()
 	err := bucket.PutObject("video/"+filename+fileSuffix, bytes.NewReader(file))
 	if err != nil {
 		g.Logger.Infof("上传文件失败" + err.Error())

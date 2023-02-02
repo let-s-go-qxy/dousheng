@@ -10,6 +10,11 @@ const (
 	GetPublishListSuccessMsg = "获取已发布视频成功"
 )
 
+const (
+	LikeFavoriteActionFail = "点赞失败"
+	LikeFavoriteActionSuccess
+)
+
 // JWT
 const (
 	TokenValidationErrorMalformed   = "token 格式错误"

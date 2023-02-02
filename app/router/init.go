@@ -1,12 +1,13 @@
 package router
 
 import (
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/route"
 	"tiktok/app/api"
 	g "tiktok/app/global"
 	"tiktok/app/internal/middleware"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/route"
 )
 
 // InitRouter 初始化路由
@@ -20,13 +21,13 @@ func InitRouter(h *server.Hertz) {
 
 	// 路由配置，跟上单独中间件 注意看好请求方法和是否需要登录
 	publicGroup.GET("/feed/", api.GetFeedList)
-	loggedGroup.GET("/favorite/action", api.FavoriteAction)
+	loggedGroup.GET("/favorite/action/", api.FavoriteAction)
 	publicGroup.POST("/user/register/", api.UserRegister)
 	publicGroup.POST("/user/login/", api.UserLogin)
 	loggedGroup.GET("/user/", api.UserInfo)
 	loggedGroup.POST("/publish/action/", api.PublishVideo)
 	loggedGroup.GET("/publish/list", api.PublishList) //发布列表
-	publicGroup.GET("/favorite/list", api.GetFavoriteList)
+	loggedGroup.GET("/favorite/list/", api.GetFavoriteList)
 	publicGroup.GET("/comment/list", api.GetCommentList)       // 查看视频评论列表
 	loggedGroup.POST("/comment/action", api.PostCommentAction) // 修改视频评论
 	loggedGroup.POST("/relation/action", api.PublishVideo)

@@ -4,7 +4,6 @@ import (
 	"strconv"
 	g "tiktok/app/global"
 	"tiktok/utils"
-	"time"
 )
 
 type Like struct {
@@ -25,13 +24,19 @@ type Like struct {
 
 // InsertLike 插入一条点赞记录
 func (like *Like) InsertLike(userId int, videoId int) {
+	var existsLike Like
+	result := g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Find(&existsLike)
 	aLike := Like{UserId: userId, VideoId: videoId, Cancel: g.FavoriteAction}
-	g.MysqlDB.Select("user_id", "video_id", "cancel").Create(&aLike)
+	if result.Error != nil {
+		g.MysqlDB.Select("user_id", "video_id", "cancel").Create(&aLike)
+	} else {
+		like.UpdateLike(userId, videoId, g.FavoriteAction)
+	}
 }
 
-// DeleteLike 删除一条点赞记录
-func (like *Like) DeleteLike(userId int, videoId int) {
-	g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Update("cancel", g.CancelFavoriteAction)
+// UpdateLike DeleteLike 更新一条点赞记录
+func (like *Like) UpdateLike(userId int, videoId int, cancel int) {
+	g.MysqlDB.Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).Update("cancel", cancel)
 }
 
 // CacheInsertLike InsertLike 插入一条cache点赞记录
@@ -54,13 +59,36 @@ func (like *Like) CacheInsertLike(userId int, videoId int) {
 // CacheDeleteLike DeleteLike 删除一条cache点赞记录
 func (like *Like) CacheDeleteLike(userId int, videoId int) {
 	g.DbVideoLike.HSet(g.RedisContext, "likeDelete", userId, videoId)
-	g.DbVideoLike.LRem(g.RedisContext, string(userId), 1, videoId)
-	g.DbVideoLike.LRem(g.RedisContext, string(videoId), 1, userId)
+
+	// 缓存存在用户点赞
+	if g.DbVideoLike.SIsMember(g.RedisContext, "userSet", userId).Val() {
+		g.DbVideoLike.LRem(g.RedisContext, string(userId), 1, videoId)
+	}
+	// 缓存存在视频的点赞记录
+	if g.DbVideoLike.SIsMember(g.RedisContext, "videoSet", videoId).Val() {
+		g.DbVideoLike.LRem(g.RedisContext, string(videoId), 1, userId)
+	}
 }
 
 // RefreshLikeCache 定期刷新缓存到数据库,likeAdd 和 likeDelete
 func (like *Like) RefreshLikeCache() {
 
+	likeAddMap, _ := g.DbVideoLike.HGetAll(g.RedisContext, "likeAdd").Result()
+	likeDeleteMap, _ := g.DbVideoLike.HGetAll(g.RedisContext, "likeDelete").Result()
+
+	for key, value := range likeAddMap {
+		g.DbVideoLike.HDel(g.RedisContext, "likeAdd", key)
+		userId, _ := strconv.Atoi(key)
+		videoId, _ := strconv.Atoi(value)
+		like.InsertLike(userId, videoId)
+	}
+
+	for key, value := range likeDeleteMap {
+		g.DbVideoLike.HDel(g.RedisContext, "likeAdd", key)
+		userId, _ := strconv.Atoi(key)
+		videoId, _ := strconv.Atoi(value)
+		like.UpdateLike(userId, videoId, g.CancelFavoriteAction)
+	}
 }
 
 // GetFavoriteVideoIdList 获取用户点赞的视频ID列表
@@ -75,22 +103,25 @@ func (like *Like) GetUserIdListForVideo(videoId int) (userIdList []int) {
 	return
 }
 
-// GetUserFavoriteVideoList 获取视频对应的点赞列表
+// GetUserFavoriteVideoList 获取用户喜爱的视频ID列表
 func (like *Like) GetUserFavoriteVideoList(userId int) (videoIdList []int) {
 	exist := g.DbVideoLike.SIsMember(g.RedisContext, "userSet", userId).Val()
 	// 缓存不存在
 	if !exist {
 		// 1、从like表中查询出喜欢的视频ID列表
 		videoIdList = like.GetFavoriteVideoIdList(userId)
+
 		// 2、将喜欢视频ID列表缓存到redis中
 		g.DbVideoLike.SAdd(g.RedisContext, "userSet", userId)
-		g.DbVideoLike.Set(g.RedisContext, strconv.Itoa(userId), videoIdList, time.Hour*24) //缓存时间设置？
+		for _, value := range videoIdList {
+			g.DbVideoLike.LPush(g.RedisContext, strconv.Itoa(userId), value)
+		}
 	} else {
-		videoIdListTmp := g.DbVideoLike.LRange(g.RedisContext, string(userId), 0, -1).Val()
+		// 缓存存在
+		videoIdListTmp := g.DbVideoLike.LRange(g.RedisContext, strconv.Itoa(userId), 0, -1).Val()
 		videoIdList = utils.String2Int(videoIdListTmp)
 	}
 	return
-
 }
 
 // GetVideoFavoriteList 获取视频点赞列表
@@ -102,7 +133,9 @@ func (like *Like) GetVideoFavoriteList(videoId int) (userIdList []int) {
 		userIdList = like.GetUserIdListForVideo(videoId)
 		// 2、将喜欢视频ID列表缓存到redis中
 		g.DbVideoLike.SAdd(g.RedisContext, "videoSet", videoId)
-		g.DbVideoLike.Set(g.RedisContext, strconv.Itoa(videoId), userIdList, time.Hour*12) //缓存时间设置？
+		for _, value := range userIdList {
+			g.DbVideoLike.LPush(g.RedisContext, strconv.Itoa(videoId), value)
+		}
 	} else {
 		userIdListTmp := g.DbVideoLike.LRange(g.RedisContext, string(videoId), 0, -1).Val()
 		userIdList = utils.String2Int(userIdListTmp)

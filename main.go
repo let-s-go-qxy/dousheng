@@ -13,6 +13,9 @@ func main() {
 	boot.MysqlDBSetup()
 	// redis  g.DbVerify  g.DbUserLike  g.DbVideoLike
 	boot.RedisSetup()
+	// 定时任务开启
+	//boot.CronTaskSetUp()
 	// hertz  8080端口
 	boot.ServerSetup()
+
 }

@@ -1,6 +1,8 @@
 package model
 
-import "tiktok/app/global"
+import (
+	"tiktok/app/global"
+)
 
 //tx := DB.Model(new(ProblemBasic)).Preload("ProblemCategories").Preload("ProblemCategories.CategoryBasic").
 //Where("title like ? OR content like ? ", "%"+keyword+"%", "%"+keyword+"%")
@@ -13,9 +15,10 @@ func (*VideoDaoStruct) GetVideoFeed(lastTime int32) ([]VideoInfo, bool) {
 
 	var result []VideoInfo
 
-	global.MysqlDB.Debug().Raw("SELECT `users`.`id` AS `UserID`,`user`.`username`, `videos`.`id` AS `VideoID`,`videos`.`play_url`, `videos`.`cover_url`,`videos`.`time`,`videos`.`title` "+
+	global.MysqlDB.Debug().Raw("SELECT `users`.`id` AS `UserID`,`users`.`name`, `videos`.`id` AS `VideoID`,"+
+		"`videos`.`play_url`, `videos`.`cover_url`,`videos`.`publish_time`,`videos`.`title` "+
 		"FROM `videos` INNER JOIN `users` ON `users`.`id` = `videos`.`author_id` "+
-		"WHERE `videos`.`time` < ? ORDER BY `videos`.`time` DESC LIMIT 10", lastTime).Scan(&result)
+		"WHERE `videos`.`publish_time` < ? ORDER BY `videos`.`publish_time` DESC LIMIT 10", lastTime).Scan(&result)
 
 	if result == nil {
 		return nil, false
