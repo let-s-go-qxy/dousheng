@@ -1,12 +1,13 @@
 package router
 
 import (
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/route"
 	"tiktok/app/api"
 	g "tiktok/app/global"
 	"tiktok/app/internal/middleware"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/route"
 )
 
 // InitRouter 初始化路由
