@@ -2,6 +2,7 @@ package comment
 
 import (
 	"errors"
+	"github.com/jinzhu/copier"
 	repository "tiktok/app/internal/model"
 	"tiktok/app/internal/service"
 	"time"
@@ -14,12 +15,34 @@ type User struct {
 	FollowerCount int    `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow"`
 }
+type Comment struct {
+	Id         int    `json:"id,omitempty"`
+	User       User   `json:"user"`
+	Content    string `json:"content,omitempty"`
+	CreateTime string `json:"create_date,omitempty"`
+}
 
 // GetCommentList查选该视频下的所有评论
-func GetCommentList(videoId int) (comments []repository.Comment, vidoeCommentCount int) {
-
+func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
 	// 调用model层comment的sql查询语句，根据视频id查询对应id的视频评论
-	comments = repository.FindCommentByVideo(videoId)
+	commentsWithUserid := repository.FindCommentByVideo(videoId)
+	for _, commentWithUserid := range commentsWithUserid {
+		commentWithUser := Comment{}
+		userid, followCount, followerCount, name, isFollow, err := service.UserInfo(commentWithUserid.UserId, commentWithUserid.UserId)
+		if err != nil {
+			err = errors.New("发表用户不存在: " + err.Error())
+		}
+		userDao := User{
+			Id:            userid,
+			Name:          name,
+			FollowCount:   followCount,
+			FollowerCount: followerCount,
+			IsFollow:      isFollow,
+		}
+		copier.Copy(&commentWithUser, &commentWithUserid)
+		commentWithUser.User = userDao
+		comments = append(comments, commentWithUser)
+	}
 	// 得到视频下的评论数
 	vidoeCommentCount = len(comments)
 	return
@@ -29,6 +52,9 @@ func GetCommentList(videoId int) (comments []repository.Comment, vidoeCommentCou
 func CommentAction(videoId int, actionType int, content string, commentId int, userId int) (comment repository.Comment, userDao User, err error) {
 	// 调用service.userInfo方法查询发表用户信息
 	userid, followCount, followerCount, name, isFollow, err := service.UserInfo(userId, userId)
+	if err != nil {
+		err = errors.New("创建者不存在: " + err.Error())
+	}
 	userDao = User{
 		Id:            userid,
 		Name:          name,
