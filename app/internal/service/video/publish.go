@@ -1,4 +1,4 @@
-package service
+package video
 
 import (
 	"tiktok/app/internal/model"
@@ -29,7 +29,7 @@ func PlusAuthor(userId int, videoList []model.Video) (respVideoList []model.Resp
 		author.Name = model.GetNameById(author.Id)
 		author.FollowCount = int(model.GetFollowCount(int(video.Author)))
 		author.FollowerCount = int(model.GetFollowerCount(int(video.Author)))
-		author.IsFollow = follow.IsFollowed(userId, int(video.Author))
+		author.IsFollow = model.IsFollow(userId, int(video.Author))
 		copier.Copy(&respVideo.Author, &author)
 
 		respVideoList = append(respVideoList, respVideo)

@@ -7,7 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	g "tiktok/app/global"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/video"
 	"tiktok/utils/common"
 	"tiktok/utils/msg"
 )
@@ -51,7 +51,7 @@ func PublishVideo(c context.Context, ctx *app.RequestContext) {
 		g.Logger.Infof("读取文件错误" + err2.Error())
 	}
 
-	if service.PublishVideo(userID.(int), title, fileByte) {
+	if video.PublishVideo(userID.(int), title, fileByte) {
 		ctx.JSON(http.StatusOK,
 			common.Response{
 				StatusCode: 0,

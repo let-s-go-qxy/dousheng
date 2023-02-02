@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"strconv"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/video"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -23,7 +23,7 @@ func PublishList(c context.Context, ctx *app.RequestContext) {
 	println("进入")
 	userId, _ := strconv.Atoi(ctx.Query("user_id"))
 
-	videoList, _ := service.GetPublicList(userId)
+	videoList, _ := video.GetPublicList(userId)
 
 	respVideoList := make([]Video, 0)
 	/*

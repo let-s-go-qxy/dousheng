@@ -1,4 +1,4 @@
-package service
+package video
 
 import (
 	"fmt"
@@ -63,14 +63,4 @@ func PublishVideo(userID int, title string, fileBytes []byte) (success bool) {
 	} else {
 		return false
 	}
-}
-
-// GetVideoListByIdList 根据视频ID列表查询视频列表,按照点赞时间顺序
-func GetVideoListByIdList(videoIdList []int) (videoList []repository.Video) {
-	for _, videoId := range videoIdList {
-		video := repository.Video{}
-		g.MysqlDB.Table("videos").Where("id = ?", videoId).Take(&video)
-		videoList = append(videoList, video)
-	}
-	return
 }

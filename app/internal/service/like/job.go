@@ -1,4 +1,4 @@
-package service
+package like
 
 type LikeCacheToDBJob struct {
 	Name string

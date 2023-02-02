@@ -6,7 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"strconv"
 	g "tiktok/app/global"
-	"tiktok/app/internal/service"
+	userService "tiktok/app/internal/service/user"
 )
 
 type UserLoginResponse struct {
@@ -25,8 +25,8 @@ func UserInfo(c context.Context, ctx *app.RequestContext) {
 	user := new(User)
 	user.Id, _ = strconv.Atoi(ctx.Query("user_id"))
 	var err error
-	myId, _ := ctx.Get("user_id")
-	_, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = service.UserInfo(myId.(int), user.Id)
+	myID, _ := ctx.Get("user_id")
+	_, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = userService.UserInfo(myID.(int), user.Id)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
@@ -45,7 +45,7 @@ func UserInfo(c context.Context, ctx *app.RequestContext) {
 func UserRegister(c context.Context, ctx *app.RequestContext) {
 	name := ctx.Query("username")
 	pw := ctx.Query("password")
-	userId, token, err := service.UserRegister(name, pw)
+	userId, token, err := userService.UserRegister(name, pw)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
@@ -65,7 +65,7 @@ func UserRegister(c context.Context, ctx *app.RequestContext) {
 func UserLogin(c context.Context, ctx *app.RequestContext) {
 	name := ctx.Query("username")
 	pw := ctx.Query("password")
-	userId, token, err := service.UserLogin(name, pw)
+	userId, token, err := userService.UserLogin(name, pw)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,

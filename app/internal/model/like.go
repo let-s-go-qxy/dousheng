@@ -1,6 +1,7 @@
 package model
 
 import (
+	"gorm.io/gorm"
 	"strconv"
 	g "tiktok/app/global"
 	"tiktok/utils"
@@ -149,6 +150,18 @@ func (like *Like) GetVideosFavoriteCount(videoId []int) (videoFavoriteCount map[
 	for _, id := range videoId {
 		videoFavoriteList := like.GetVideoFavoriteList(id)
 		videoFavoriteCount[id] = len(videoFavoriteList)
+	}
+	return
+}
+
+// IsLike 是否喜欢该视频
+func (like *Like) IsLike() (b bool, err error) {
+	b = false
+	err = g.MysqlDB.First(like, "user_id = ? AND video_id = ? AND cancel = ?", like.UserId, like.VideoId, 1).Error
+	if err == gorm.ErrRecordNotFound {
+		err = nil
+	} else {
+		b = true
 	}
 	return
 }

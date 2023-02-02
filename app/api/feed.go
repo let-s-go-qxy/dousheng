@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"tiktok/app/internal/model"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/video"
 	"tiktok/utils/common"
 	"tiktok/utils/msg"
 	"time"
@@ -24,8 +24,14 @@ func GetFeedList(c context.Context, ctx *app.RequestContext) {
 	if lastTime == 0 {
 		lastTime = time.Now().Unix()
 	}
+	// myId
+	myId, _ := ctx.Get("user_id")
+	if myId == nil {
+		myId = 0
+	}
 	// 需要获取NextTime、VideoList
-	nextTime, videoInfo, state := service.GetVideoFeed(lastTime, userID)
+	nextTime, videoInfo, state := video.GetVideoFeed(lastTime, userID, myId.(int))
+
 	if state == 0 {
 		ctx.JSON(http.StatusOK, &model.GetVideoResponse{
 			Response: common.Response{

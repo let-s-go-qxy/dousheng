@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"strconv"
 	"tiktok/app/global"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/like"
 	"tiktok/utils/msg"
 )
 
@@ -18,7 +18,7 @@ func GetFavoriteList(c context.Context, ctx *app.RequestContext) {
 	if err != nil {
 		global.Logger.Error("用户ID错误")
 	}
-	videoList := service.GetFavoriteList(uid)
+	videoList := like.GetFavoriteList(uid)
 	respVideoList := make([]Video, 0)
 	copier.Copy(&respVideoList, &videoList)
 
@@ -31,7 +31,7 @@ func FavoriteAction(c context.Context, ctx *app.RequestContext) {
 	userId, _ := ctx.Get("user_id")
 	videoId, _ := strconv.Atoi(ctx.Query("video_id"))
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
-	res := service.FavoriteAction(userId.(int), videoId, actionType)
+	res := like.FavoriteAction(userId.(int), videoId, actionType)
 	if res {
 		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionSuccess)
 	} else {

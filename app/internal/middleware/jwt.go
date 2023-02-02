@@ -6,7 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"tiktok/app/api"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/user"
 	"time"
 )
 
@@ -23,7 +23,7 @@ func Jwt() app.HandlerFunc {
 			})
 			return
 		}
-		claims, err := service.ParseToken(token)
+		claims, err := user.ParseToken(token)
 		if err != nil || claims.Expire < int(time.Now().Unix()) {
 			// TODO 这里应该是返回401，但是Demo中是这么写的，所以为了适配app故此
 			ctx.AbortWithStatusJSON(consts.StatusOK, api.Response{

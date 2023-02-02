@@ -1,7 +1,9 @@
 package api
 
-import "tiktok/app/internal/service"
+import (
+	"tiktok/app/internal/service/like"
+)
 
 var (
-	LikeCacheToDBJob = service.LikeCacheToDBJob{Name: "LikeRefresh"}
+	LikeCacheToDBJob = like.LikeCacheToDBJob{Name: "LikeRefresh"}
 )

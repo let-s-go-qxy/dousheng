@@ -1,12 +1,15 @@
-package service
+package video
 
 import (
 	"sync"
 	"tiktok/app/internal/model"
+	"tiktok/app/internal/service/comment"
+	"tiktok/app/internal/service/like"
+	"tiktok/app/internal/service/user"
 	"tiktok/manifest/ossRelated"
 )
 
-func GetVideoFeed(lastTime int64, userID int32) (nextTime int64, videoInfo []model.TheVideoInfo, state int) {
+func GetVideoFeed(lastTime int64, userID int32, myID int) (nextTime int64, videoInfo []model.TheVideoInfo, state int) {
 	// state 0:已经没有视频了  1:获取成功  -1:获取失败
 
 	allVideoInfoData, isExist := model.VideoDao.GetVideoFeed(int32(lastTime))
@@ -24,17 +27,14 @@ func GetVideoFeed(lastTime int64, userID int32) (nextTime int64, videoInfo []mod
 
 	for index, videoInfoData := range allVideoInfoData {
 		go func(index int, videoInfo []model.TheVideoInfo, videoInfoData model.VideoInfo, userID int32) {
-			var followerCount, followCount, commentCount, favoriteCount int64
+			var followerCount, followCount, commentCount, favoriteCount int
 
 			var isFollow, isFavorite bool
 
-			//视频的关注点赞等信息
-			followerCount = 1
-			followCount = 1
-			commentCount = 1
-			favoriteCount = 1
-			isFollow = true
-			isFavorite = true
+			_, followCount, followerCount, _, isFollow, _ = user.UserInfo(myID, int(userID))
+			_, commentCount = comment.GetCommentList(int(videoInfoData.VideoID))
+			favoriteCount = len(like.GetFavoriteList(int(videoInfoData.VideoID)))
+			isFavorite = like.IsLike(myID, int(videoInfoData.VideoID))
 
 			videoInfo[index] = model.TheVideoInfo{
 				ID: videoInfoData.VideoID,
