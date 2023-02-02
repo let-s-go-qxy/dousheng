@@ -1,6 +1,8 @@
 package global
 
-import "errors"
+import (
+	"errors"
+)
 
 // 状态码
 var (

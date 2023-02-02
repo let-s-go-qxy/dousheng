@@ -8,13 +8,11 @@ import (
 	"strconv"
 	"tiktok/app/global"
 	"tiktok/app/internal/service"
+	"tiktok/utils/msg"
 )
 
-// GetFavoriteList 获取Feed列表
+// GetFavoriteList 获取喜爱视频列表
 func GetFavoriteList(c context.Context, ctx *app.RequestContext) {
-	//1、token校验
-
-	//2、请求处理
 	userId := ctx.Query("user_id")
 	uid, err := strconv.Atoi(userId)
 	if err != nil {
@@ -35,8 +33,8 @@ func FavoriteAction(c context.Context, ctx *app.RequestContext) {
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
 	res := service.FavoriteAction(userId.(int), videoId, actionType)
 	if res {
-		ctx.JSON(consts.StatusOK, "点赞成功")
+		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionSuccess)
 	} else {
-
+		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionFail)
 	}
 }
