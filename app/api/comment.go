@@ -29,7 +29,7 @@ func GetCommentList(c context.Context, ctx *app.RequestContext) {
 		respComment.CreateTime = respComment.CreateTime[5:10]
 		respCommentList = append(respCommentList, respComment)
 	}
-	resp := CommentListResponse{StatusCode: consts.StatusOK, StatusMsg: "返回成功", CommentList: respCommentList}
+	resp := CommentListResponse{StatusCode: 0, StatusMsg: "返回成功", CommentList: respCommentList}
 	ctx.JSON(consts.StatusOK, resp)
 }
 
@@ -57,6 +57,6 @@ func PostCommentAction(c context.Context, ctx *app.RequestContext) {
 	copier.Copy(&respComment.User, &userDao)
 	respComment.Content = comment.Content
 	respComment.CreateTime = comment.CreateTime[5:10]
-	resp := CommentResponse{StatusCode: consts.StatusOK, StatusMsg: "返回成功", Comment: respComment}
+	resp := CommentResponse{StatusCode: 0, StatusMsg: "返回成功", Comment: respComment}
 	ctx.JSON(consts.StatusOK, resp)
 }
