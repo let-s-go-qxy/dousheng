@@ -1,4 +1,4 @@
-package service
+package like
 
 import (
 	"github.com/jinzhu/copier"
@@ -15,16 +15,28 @@ var (
 func FavoriteAction(userId int, videoId int, action int) bool {
 	if action == g.FavoriteAction {
 		// 点赞操作
-		like.CacheInsertLike(userId, videoId)
+		like.InsertLike(userId, videoId)
+		//like.CacheInsertLike(userId, videoId)
 		return true
 	} else if action == g.CancelFavoriteAction {
 		//取消点赞操作
-		like.CacheDeleteLike(userId, videoId)
+		like.UpdateLike(userId, videoId, g.CancelFavoriteAction)
+		//like.CacheDeleteLike(userId, videoId)
 		return true
 	} else {
 		//点赞参数不对，错误处理
 		return false
 	}
+}
+
+// GetVideoListByIdList 根据视频ID列表查询视频列表,按照点赞时间顺序
+func GetVideoListByIdList(videoIdList []int) (videoList []repository.Video) {
+	for _, videoId := range videoIdList {
+		video := repository.Video{}
+		g.MysqlDB.Table("videos").Where("id = ?", videoId).Take(&video)
+		videoList = append(videoList, video)
+	}
+	return
 }
 
 // GetFavoriteList 查询用户喜欢视频列表,及每个视频的点赞数
@@ -62,5 +74,13 @@ func GetVideosAuthor(userId int, videoList []repository.Video) (videosAuthor map
 		author.IsFollow = repository.IsFollow(userId, int(video.Author))
 		videosAuthor[int(video.Id)] = author
 	}
+	return
+}
+
+func IsLike(userId, videoId int) (b bool) {
+	like := new(repository.Like)
+	like.UserId = userId
+	like.VideoId = videoId
+	b, _ = like.IsLike()
 	return
 }

@@ -1,4 +1,4 @@
-package service
+package ralation
 
 import (
 	"tiktok/app/internal/model"

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/jinzhu/copier"
 	repository "tiktok/app/internal/model"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/user"
 	"time"
 )
 
@@ -28,7 +28,7 @@ func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
 	commentsWithUserid := repository.FindCommentByVideo(videoId)
 	for _, commentWithUserid := range commentsWithUserid {
 		commentWithUser := Comment{}
-		userid, followCount, followerCount, name, isFollow, err := service.UserInfo(commentWithUserid.UserId, commentWithUserid.UserId)
+		userid, followCount, followerCount, name, isFollow, err := user.UserInfo(commentWithUserid.UserId, commentWithUserid.UserId)
 		if err != nil {
 			err = errors.New("发表用户不存在: " + err.Error())
 		}
@@ -51,7 +51,7 @@ func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
 // 对评论进行创建或者删除
 func CommentAction(videoId int, actionType int, content string, commentId int, userId int) (comment repository.Comment, userDao User, err error) {
 	// 调用service.userInfo方法查询发表用户信息
-	userid, followCount, followerCount, name, isFollow, err := service.UserInfo(userId, userId)
+	userid, followCount, followerCount, name, isFollow, err := user.UserInfo(userId, userId)
 	if err != nil {
 		err = errors.New("创建者不存在: " + err.Error())
 	}

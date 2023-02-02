@@ -24,7 +24,7 @@ func InitRouter(h *server.Hertz) {
 	loggedGroup.GET("/favorite/action/", api.FavoriteAction)
 	publicGroup.POST("/user/register/", api.UserRegister)
 	publicGroup.POST("/user/login/", api.UserLogin)
-	loggedGroup.GET("/user", api.UserInfo)
+	loggedGroup.GET("/user/", api.UserInfo)
 	loggedGroup.POST("/publish/action/", api.PublishVideo)
 	loggedGroup.GET("/publish/list", api.PublishList) //发布列表
 	loggedGroup.GET("/favorite/list/", api.GetFavoriteList)
