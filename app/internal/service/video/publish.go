@@ -16,6 +16,14 @@ func GetPublicList(userId int) (respVideoList []model.RespVideo, err error) {
 	var videoList []model.Video
 	videoList = model.GetPublicList(userId)
 
+	//利用封装函数
+	respVideoList = PlusAuthor(userId, videoList)
+	return
+}
+
+// 将author封装到video
+func PlusAuthor(userId int, videoList []model.Video) (respVideoList []model.RespVideo) {
+
 	for _, video := range videoList {
 		respVideo := model.RespVideo{}
 		copier.Copy(&respVideo, &video)
