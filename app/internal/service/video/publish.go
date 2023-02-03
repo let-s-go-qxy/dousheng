@@ -38,7 +38,7 @@ func PlusAuthor(userId int, videoList []model.Video) (respVideoList []model.Resp
 		respVideo.CoverUrl = ossRelated.OSSPreURL + respVideo.CoverUrl + ".jpg"
 
 		_, respVideo.CommentCount = comment.GetCommentList(int(respVideo.Id))
-		respVideo.FavoriteCount = len(like.GetFavoriteList(int(respVideo.Id)))
+		respVideo.FavoriteCount = like.VideoFavoriteCount(int(respVideo.Id))
 		respVideo.IsFavorite = like.IsLike(int(userId), int(respVideo.Id))
 
 		respVideoList = append(respVideoList, respVideo)

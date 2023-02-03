@@ -18,11 +18,11 @@ func GetFavoriteList(c context.Context, ctx *app.RequestContext) {
 	if err != nil {
 		global.Logger.Error("用户ID错误")
 	}
-	videoList := like.GetFavoriteList(uid)
+	videoList, _ := like.GetFavoriteList(uid)
 	respVideoList := make([]Video, 0)
 	copier.Copy(&respVideoList, &videoList)
 
-	resp := FavoriteListResponse{StatusCode: consts.StatusOK, StatusMsg: "返回成功", VideoList: respVideoList}
+	resp := FavoriteListResponse{StatusCode: 0, StatusMsg: "返回成功", VideoList: respVideoList}
 	ctx.JSON(consts.StatusOK, resp)
 }
 
@@ -31,12 +31,13 @@ func FavoriteAction(c context.Context, ctx *app.RequestContext) {
 	userId, _ := ctx.Get("user_id")
 	videoId, _ := strconv.Atoi(ctx.Query("video_id"))
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
-	res := like.FavoriteAction(userId.(int), videoId, actionType)
-	if res {
+	err := like.FavoriteAction(userId.(int), videoId, actionType)
+	if err == nil {
 		ctx.JSON(consts.StatusOK,
 			Response{0,
-				"点赞成功"})
+				msg.LikeFavoriteActionSuccess})
 	} else {
-		ctx.JSON(consts.StatusOK, msg.LikeFavoriteActionFail)
+		ctx.JSON(consts.StatusOK, Response{1,
+			msg.LikeFavoriteActionFail})
 	}
 }

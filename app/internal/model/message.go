@@ -1,6 +1,6 @@
 package model
 
-type Comment struct {
+type Message struct {
 	Id         int    `gorm:"primaryKey" json:"id"`
 	FromId     int    `json:"from_id"`
 	ToId       int    `json:"to_id"`
