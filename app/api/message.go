@@ -15,8 +15,8 @@ import (
 
 type MergeMessage struct {
 	Id         int    `json:"id"`
-	ToId       int    `json:"to_id"`
-	FromId     int    `json:"from_id"`
+	ToId       int    `json:"to_user_id"`
+	FromId     int    `json:"from_user_id"`
 	Content    string `json:"content"`
 	CreateTime string `json:"create_time"`
 }
