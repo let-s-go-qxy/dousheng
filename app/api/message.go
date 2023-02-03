@@ -2,47 +2,57 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	g "tiktok/app/global"
-	"tiktok/app/internal/model"
+	m "tiktok/app/internal/service/message"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/json"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/jinzhu/copier"
 )
 
-func GetMessageList(c context.Context, ctx *app.RequestContext) {
-	//获取to_user_id和user_id
-	toid := ctx.Query("to_user_id")
-	fromid := ctx.Query("user_id")
+type MergeMessage struct {
+	Id         int    `json:"id"`
+	ToId       int    `json:"to_id"`
+	FromId     int    `json:"from_id"`
+	Content    string `json:"content"`
+	CreateTime string `json:"create_time"`
+}
+type MessageListResponse struct {
+	Response
+	MessageList []MergeMessage `json:"message_list"`
+}
 
-	toId, err := strconv.Atoi(toid)
+func GetMessageList(c context.Context, ctx *app.RequestContext) {
+	//token鉴权
+
+	//获取to_user_id和user_id
+
+	toId, err := strconv.Atoi(ctx.Query("to_user_id"))
 	if err != nil {
 		g.Logger.Error("获取对方ID错误")
 	}
-	fromId, err := strconv.Atoi(fromid)
-	if err != nil {
-		g.Logger.Error("获取自己ID错误")
-	}
 
-	//token鉴权
+	fromId := m.GetFromId(toId)
 
-	//token进行用户鉴权
-	ctx.Query("token")
+	messageList, _ := m.GetMessageList(toId, fromId)
 
-	fromPrimaryKey := g.MysqlDB.First(fromId)
-	toPrimaryKey := g.MysqlDB.First(toId)
+	respMessageList := make([]MergeMessage, 0)
 
-	var tomessage []model.MessageSendEvent  //发送的消息
-	var resmessage []model.MessagePushEvent //接收的消息
-	var messagelist []model.Message         //合并之后的消息
+	copier.Copy(&respMessageList, &messageList)
 
-	//根据fromid和toid查询对应的消息
-	g.MysqlDB.Where("from_user_id = ?", fromPrimaryKey).Find(&tomessage)
-	g.MysqlDB.Where("to_user_id = ?", toPrimaryKey).Find(&resmessage)
-	g.MysqlDB.Where("to_user_id = ?", toPrimaryKey).Find(&messagelist)
+	resp := MessageListResponse{Response: Response{
+		StatusCode: 0,
+		StatusMsg:  "成功!!"},
+		MessageList: respMessageList}
 
-	//把发送的消息和接收的消息进行合并到messagelist
-
+	marshal, _ := json.Marshal(respMessageList)
+	fmt.Println(string(marshal))
+	ctx.JSON(consts.StatusOK, resp)
 }
+
 func GetMessageAction(c context.Context, ctx *app.RequestContext) {
 
 }
