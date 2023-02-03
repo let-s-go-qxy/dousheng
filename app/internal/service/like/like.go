@@ -1,7 +1,6 @@
 package like
 
 import (
-	"fmt"
 	"github.com/jinzhu/copier"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
@@ -83,6 +82,6 @@ func IsLike(userId, videoId int) (b bool) {
 	like.UserId = userId
 	like.VideoId = videoId
 	b, _ = like.IsLike()
-	fmt.Println(userId, videoId, b)
+	//fmt.Println(userId, videoId, b)
 	return
 }

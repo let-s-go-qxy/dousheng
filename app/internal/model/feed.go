@@ -11,14 +11,14 @@ import (
 //Where("pc.category_id = (SELECT cb.id FROM category_basic cb WHERE cb.identity = ? )", categoryIdentity)
 //}
 
-func (*VideoDaoStruct) GetVideoFeed(lastTime int32) ([]VideoInfo, bool) {
+func (*VideoDaoStruct) GetVideoFeed(latestTime int32) ([]VideoInfo, bool) {
 
 	var result []VideoInfo
 
 	global.MysqlDB.Debug().Raw("SELECT `users`.`id` AS `UserID`,`users`.`name` AS `Username`, `videos`.`id` AS `VideoID`,"+
-		"`videos`.`play_url`, `videos`.`cover_url`,`videos`.`publish_time`,`videos`.`title` "+
+		"`videos`.`play_url`, `videos`.`cover_url`,`videos`.`publish_time` AS `Time`,`videos`.`title` "+
 		"FROM `videos` INNER JOIN `users` ON `users`.`id` = `videos`.`author_id` "+
-		"WHERE `videos`.`publish_time` < ? ORDER BY `videos`.`publish_time` DESC LIMIT 10", lastTime).Scan(&result)
+		"WHERE `videos`.`publish_time` < ? ORDER BY `videos`.`publish_time` DESC LIMIT 10", latestTime).Scan(&result)
 
 	if result == nil {
 		return nil, false
