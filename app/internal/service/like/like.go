@@ -1,6 +1,7 @@
 package like
 
 import (
+	"fmt"
 	"github.com/jinzhu/copier"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
@@ -18,7 +19,7 @@ func FavoriteAction(userId int, videoId int, action int) bool {
 		like.InsertLike(userId, videoId)
 		//like.CacheInsertLike(userId, videoId)
 		return true
-	} else if action == g.CancelFavoriteAction {
+	} else if action == g.RequestCancelFavoriteAction {
 		//取消点赞操作
 		like.UpdateLike(userId, videoId, g.CancelFavoriteAction)
 		//like.CacheDeleteLike(userId, videoId)
@@ -82,5 +83,6 @@ func IsLike(userId, videoId int) (b bool) {
 	like.UserId = userId
 	like.VideoId = videoId
 	b, _ = like.IsLike()
+	fmt.Println(userId, videoId, b)
 	return
 }

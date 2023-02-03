@@ -20,22 +20,22 @@ func InitRouter(h *server.Hertz) {
 	loggedGroup := InitGroup(h, "", middleware.Jwt())
 
 	// 路由配置，跟上单独中间件 注意看好请求方法和是否需要登录
-	publicGroup.GET("/feed/", api.GetFeedList)
-	loggedGroup.GET("/favorite/action/", api.FavoriteAction)
+	publicGroup.GET("/feed/", middleware.ParseToken(), api.GetFeedList)
+	loggedGroup.POST("/favorite/action/", api.FavoriteAction)
 	publicGroup.POST("/user/register/", api.UserRegister)
 	publicGroup.POST("/user/login/", api.UserLogin)
 	loggedGroup.GET("/user/", api.UserInfo)
 	loggedGroup.POST("/publish/action/", api.PublishVideo)
-	loggedGroup.GET("/publish/list", api.PublishList) //发布列表
+	loggedGroup.GET("/publish/list/", api.PublishList) //发布列表
 	loggedGroup.GET("/favorite/list/", api.GetFavoriteList)
-	publicGroup.GET("/comment/list", api.GetCommentList)       // 查看视频评论列表
-	loggedGroup.POST("/comment/action", api.PostCommentAction) // 修改视频评论
-	loggedGroup.POST("/relation/action", api.PublishVideo)
-	loggedGroup.GET("/relation/follow/list", api.GetFollowerList)
-	loggedGroup.GET("/relation/follower/list", api.GetFollowerList)
-	loggedGroup.GET("/relation/friend/list", api.GetFollowerList)
-	loggedGroup.GET("/message/chat/", api.GetMessageList)
-	loggedGroup.GET("/message/action/", api.GetMessageAction)
+	publicGroup.GET("/comment/list/", api.GetCommentList)       // 查看视频评论列表
+	loggedGroup.POST("/comment/action/", api.PostCommentAction) // 修改视频评论
+	loggedGroup.POST("/relation/action/", api.PublishVideo)
+	loggedGroup.GET("/relation/follow/list/", api.GetFollowerList)
+	loggedGroup.GET("/relation/follower/list/", api.GetFollowerList)
+	loggedGroup.GET("/relation/friend/list/", api.GetFollowerList)
+	publicGroup.GET("/message/chat/", api.GetFollowerList)
+	publicGroup.GET("/message/action/", api.GetFollowerList)
 
 	// 路由注册成功log
 	g.Logger.Infof("initialize routers successfully")
