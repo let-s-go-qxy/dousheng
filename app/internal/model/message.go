@@ -46,7 +46,7 @@ func GetFromId(toUserId int) (fromUserId int) {
 	return
 }
 
-// CreateMessage
+// 创建消息
 func CreateMessage(message *RespMessage) (err error) {
 	err = g.MysqlDB.Table("messages").Create(message).Error
 	return
