@@ -91,7 +91,7 @@ func RedisSetup() {
 		g.Logger.Fatalf("connect to videoLike redis instance failed, err: %v", err)
 	}
 	g.DbVideoLike = videoLikeDb
-
+	g.DbVideoLike.FlushAll(g.RedisContext)
 	g.Logger.Info("initialize videoLike redis client successfully")
 
 }

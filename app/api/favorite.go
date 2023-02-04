@@ -21,7 +21,6 @@ func GetFavoriteList(c context.Context, ctx *app.RequestContext) {
 	videoList, _ := like.GetFavoriteList(uid)
 	respVideoList := make([]Video, 0)
 	copier.Copy(&respVideoList, &videoList)
-
 	resp := FavoriteListResponse{StatusCode: 0, StatusMsg: "返回成功", VideoList: respVideoList}
 	ctx.JSON(consts.StatusOK, resp)
 }

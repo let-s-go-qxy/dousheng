@@ -60,15 +60,15 @@ func (like *Like) RefreshLikeCache() {
 	}
 }
 
-// GetFavoriteVideoIdList 根据userId， 查询用户点赞的视频,返回videoId列表
+// GetFavoriteVideoIdList 直接查询MySQL，根据userId， 查询用户点赞的视频,返回videoId列表
 func (like *Like) GetFavoriteVideoIdList(userId int) (videoIdList []int) {
-	g.MysqlDB.Table("likes").Select("video_id").Where("user_id = ? and cancel = ?", userId, g.FavoriteAction).Find(&videoIdList)
+	g.MysqlDB.Table("likes").Select("video_id").Where(map[string]interface{}{"user_id": userId, "cancel": g.FavoriteAction}).Find(&videoIdList)
 	return
 }
 
-// GetUserIdListForVideo 根据videoID，从数据库查询点赞列表,返回userId列表
+// GetUserIdListForVideo 直接查询MySQL，根据videoID，从查询视频点赞列表,返回userId列表
 func (like *Like) GetUserIdListForVideo(videoId int) (userIdList []int) {
-	g.MysqlDB.Table("likes").Select("user_id").Where("video_id = ? and cancel = ?", videoId, g.FavoriteAction).Find(&userIdList)
+	g.MysqlDB.Table("likes").Select("user_id").Where(map[string]interface{}{"video_id": videoId, "cancel": g.FavoriteAction}).Find(&userIdList)
 	return
 }
 
@@ -81,7 +81,7 @@ func (like *Like) GetFavoriteVideoList(userId int) ([]int, error) {
 			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取用户喜爱列表失败%v", err)
 			return nil, err
 		}
-		if strVideoIdList, err := g.DbVideoLike.LRange(g.RedisContext, strUserId, 0, -1).Result(); err != nil {
+		if strVideoIdList, err := g.DbVideoLike.SMembers(g.RedisContext, strUserId).Result(); err != nil {
 			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取用户喜爱列表失败%v", err)
 			return nil, err
 		} else {
@@ -92,7 +92,7 @@ func (like *Like) GetFavoriteVideoList(userId int) ([]int, error) {
 		// 从数据库查询，并加载到缓存中
 		videoIdList := like.GetFavoriteVideoIdList(userId)
 		for _, value := range videoIdList {
-			if _, err := g.DbVideoLike.LPush(g.RedisContext, strUserId, value).Result(); err != nil {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strUserId, value).Result(); err != nil {
 				g.Logger.Error("方法GetUserFavoriteVideoList: 用户喜爱列表加载入缓存失败%v\", err")
 				g.DbVideoLike.Del(g.RedisContext, strUserId)
 				return nil, err
@@ -103,8 +103,8 @@ func (like *Like) GetFavoriteVideoList(userId int) ([]int, error) {
 			g.DbVideoLike.Del(g.RedisContext, strUserId)
 			return nil, err
 		}
-
 		return videoIdList, nil
+
 	}
 }
 
@@ -117,7 +117,7 @@ func (like *Like) GetVideoFavoriteList(videoId int) ([]int, error) {
 			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取视频点赞列表失败%v", err)
 			return nil, err
 		}
-		if strUserIdList, err := g.DbVideoLike.LRange(g.RedisContext, strVideoId, 0, -1).Result(); err != nil {
+		if strUserIdList, err := g.DbVideoLike.SMembers(g.RedisContext, strVideoId).Result(); err != nil {
 			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取视频点赞列表失败%v", err)
 			return nil, err
 		} else {
@@ -128,7 +128,7 @@ func (like *Like) GetVideoFavoriteList(videoId int) ([]int, error) {
 		// 从数据库查询，并加载到缓存中
 		userIdList := like.GetUserIdListForVideo(videoId)
 		for _, value := range userIdList {
-			if _, err := g.DbVideoLike.LPush(g.RedisContext, strVideoId, value).Result(); err != nil {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strVideoId, value).Result(); err != nil {
 				g.Logger.Error("方法GetUserFavoriteVideoList: 缓存写入视频点赞列表失败%v", err)
 				g.DbVideoLike.Del(g.RedisContext, strVideoId)
 				return nil, err
@@ -157,14 +157,53 @@ func (like *Like) GetVideosFavoriteCount(videoId []int) (map[int]int, error) {
 }
 
 func (like *Like) IsLike(userId int, videoId int) (b bool, err error) {
-	videoIdList, err := like.GetFavoriteVideoList(userId)
-	if err != nil {
-		return false, err
-	}
-	for _, value := range videoIdList {
-		if value == videoId {
-			return true, nil
+
+	strUserId := strconv.Itoa(userId)
+	if n, err := g.DbVideoLike.Exists(g.RedisContext, strUserId).Result(); n > 0 { //缓存存在
+		if err != nil {
+			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取用户喜爱列表失败%v", err)
+			return false, err
+		}
+		if res, err := g.DbVideoLike.SIsMember(g.RedisContext, strUserId, videoId).Result(); err != nil {
+			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取用户喜爱列表失败%v", err)
+			return false, err
+		} else {
+			return res, nil
+		}
+	} else { //缓存不存在
+		// 从数据库查询，并加载到缓存中
+		videoIdList := like.GetFavoriteVideoIdList(userId)
+		for _, value := range videoIdList {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strUserId, value).Result(); err != nil {
+				g.Logger.Error("方法GetUserFavoriteVideoList: 用户喜爱列表加载入缓存失败%v\", err")
+				g.DbVideoLike.Del(g.RedisContext, strUserId)
+				return false, err
+			}
+		}
+		if _, err := g.DbVideoLike.Expire(g.RedisContext, strUserId, time.Minute*5).Result(); err != nil {
+			g.Logger.Error("方法favoriteAction：设置过期时间失败%v", err)
+			g.DbVideoLike.Del(g.RedisContext, strUserId)
+			return false, err
+		}
+
+		if res, err := g.DbVideoLike.SIsMember(g.RedisContext, strUserId, videoId).Result(); err != nil {
+			g.Logger.Error("方法GetUserFavoriteVideoList: 缓存获取用户喜爱列表失败%v", err)
+			return false, err
+		} else {
+			return res, nil
 		}
 	}
-	return false, nil
+
+	////=========
+	//videoIdList, err := like.GetFavoriteVideoList(userId)
+	//if err != nil {
+	//	return false, err
+	//}
+	//
+	//for _, value := range videoIdList {
+	//	if value == videoId {
+	//		return true, nil
+	//	}
+	//}
+	//return false, nil
 }

@@ -29,7 +29,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				g.Logger.Error("方法FavoriteAction执行失败 %v", err)
 				return err
 			}
-			if _, err1 := g.DbVideoLike.LPush(g.RedisContext, strUserId, videoId).Result(); err != nil {
+			if _, err1 := g.DbVideoLike.SAdd(g.RedisContext, strUserId, videoId).Result(); err != nil {
 				g.Logger.Error("方法FavoriteAction执行失败 %v", err)
 				return err1
 			} else {
@@ -56,8 +56,9 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				return err
 			}
 			//
-			if _, err := g.DbVideoLike.LPush(g.RedisContext, strUserId, videoId).Result(); err != nil {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strUserId, videoId).Result(); err != nil {
 				g.Logger.Error("方法：favoriteAction执行失败 %v", err)
+				g.DbVideoLike.Del(g.RedisContext, strUserId)
 				return err
 			} else {
 				// 替换消息队列
@@ -72,7 +73,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				g.Logger.Error("方法：favoriteAction: 缓存查询video点赞列表执行失败 %v", err)
 				return err
 			}
-			if _, err := g.DbVideoLike.LPush(g.RedisContext, strVideoId, userId).Result(); err != nil {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strVideoId, userId).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction: video点赞列表插入user执行失败 %v", err)
 				return err
 			}
@@ -93,7 +94,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				g.DbVideoLike.Del(g.RedisContext, strUserId)
 				return err
 			}
-			if _, err := g.DbVideoLike.LPush(g.RedisContext, strVideoId, userId).Result(); err != nil {
+			if _, err := g.DbVideoLike.SAdd(g.RedisContext, strVideoId, userId).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction:video点赞插入执行失败 %v", err)
 				// 防止脏读
 				g.DbVideoLike.Del(g.RedisContext, strUserId)
@@ -109,7 +110,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				g.Logger.Error("方法favoriteAction:缓存查询用户ID执行失败 %v", err)
 				return err
 			}
-			if _, err1 := g.DbVideoLike.LRem(g.RedisContext, strUserId, 1, videoId).Result(); err1 != nil {
+			if _, err1 := g.DbVideoLike.SRem(g.RedisContext, strUserId, videoId).Result(); err1 != nil {
 				g.Logger.Error("方法favoriteAction:缓存取消点赞执行失败 %v", err)
 				return err1
 			} else {
@@ -120,7 +121,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 			// 从数据库拉取最新的点赞列表,并缓存到数据库中
 			videoIdList := like.GetFavoriteVideoIdList(userId)
 			for _, value := range videoIdList {
-				if _, err := g.DbVideoLike.LPush(g.RedisContext, strUserId, value).Result(); err != nil {
+				if _, err := g.DbVideoLike.SAdd(g.RedisContext, strUserId, value).Result(); err != nil {
 					g.Logger.Error("方法：favoriteAction取消点赞执行失败 %v", err)
 					// 防止脏读
 					g.DbVideoLike.Del(g.RedisContext, strUserId)
@@ -148,7 +149,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				g.Logger.Error("方法：favoriteAction: 缓存查询video点赞列表执行失败 %v", err)
 				return err
 			}
-			if _, err := g.DbVideoLike.LRem(g.RedisContext, strVideoId, 1, userId).Result(); err != nil {
+			if _, err := g.DbVideoLike.SRem(g.RedisContext, strVideoId, userId).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction: video取消点赞执行失败 %v", err)
 				return err
 			}
@@ -157,23 +158,23 @@ func FavoriteAction(userId int, videoId int, action int) error {
 			// 从MySQl拉取视频的点赞列表，加载到redis中
 			userIdList := like.GetUserIdListForVideo(videoId)
 			for _, value := range userIdList {
-				if _, err := g.DbVideoLike.LPush(g.RedisContext, strVideoId, value).Result(); err != nil {
+				if _, err := g.DbVideoLike.SAdd(g.RedisContext, strVideoId, value).Result(); err != nil {
 					g.Logger.Error("方法favoriteAction:video取消点赞执行失败 %v", err)
 					// 防止脏读
-					g.DbVideoLike.Del(g.RedisContext, strUserId)
+					g.DbVideoLike.Del(g.RedisContext, strVideoId)
 					return err
 				}
 			}
 			if _, err := g.DbVideoLike.Expire(g.RedisContext, strVideoId, time.Minute*5).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction：设置过期时间失败%v", err)
-				g.DbVideoLike.Del(g.RedisContext, strUserId)
+				g.DbVideoLike.Del(g.RedisContext, strVideoId)
 				return err
 			}
 
 			if _, err := g.DbVideoLike.LRem(g.RedisContext, strVideoId, 1, userId).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction:video点赞插入执行失败 %v", err)
 				// 防止脏读
-				g.DbVideoLike.Del(g.RedisContext, strUserId)
+				g.DbVideoLike.Del(g.RedisContext, strVideoId)
 				return err
 			}
 		}
