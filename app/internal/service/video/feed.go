@@ -32,7 +32,7 @@ func GetVideoFeed(lastTime int64, userID int32) (nextTime int64, videoInfo []mod
 			var isFollow, isFavorite bool
 			_, followCount, followerCount, _, isFollow, _ = user.UserInfo(int(userID), int(videoInfoData.UserID))
 			_, commentCount = comment.GetCommentList(int(videoInfoData.VideoID))
-			favoriteCount = len(like.GetFavoriteList(int(videoInfoData.VideoID)))
+			favoriteCount = like.FavoriteVideoCount(int(videoInfoData.VideoID))
 			isFavorite = like.IsLike(int(userID), int(videoInfoData.VideoID))
 
 			videoInfo[index] = model.TheVideoInfo{
