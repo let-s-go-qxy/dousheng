@@ -54,5 +54,20 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 }
 
 func GetMessageAction(c context.Context, ctx *app.RequestContext) {
+	toId, _ := strconv.Atoi(ctx.Query("to_user_id"))
+	action_type, _ := strconv.Atoi(ctx.Query("action_type"))
+	content, _ := strconv.Atoi(ctx.Query("content"))
+	fromId := m.GetFromId(toId)
+
+	respmessage, err := service.MessgaeAction(message)
+	if err != nil {
+		ctx.JSON(consts.StatusOK, Response{
+			StatusCode: g.StatusCodeFail,
+			StatusMsg:  err.Error(),
+		})
+	}
+
+	resp := Response{StatusCode: 0, StatusMsg: "返回成功"}
+	ctx.JSON(consts.StatusOK, resp)
 
 }

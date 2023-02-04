@@ -45,3 +45,9 @@ func GetFromId(toUserId int) (fromUserId int) {
 	fmt.Printf("%d", fromUserId)
 	return
 }
+
+// CreateMessage
+func CreateMessage(message *RespMessage) (respmessage *RespMessage, err error) {
+	g.MysqlDB.Table("message").Debug().Create(&message)
+
+}

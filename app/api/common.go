@@ -66,3 +66,9 @@ type CommentResponse struct {
 	StatusMsg  string  `json:"status_msg,omitempty"`
 	Comment    Comment `json:"comment,,omitempty"`
 }
+
+type MessageResponse struct {
+	StatusCode int32   `json:"status_code"`
+	StatusMsg  string  `json:"status_msg,omitempty"`
+	Message    Message `json:"comment,,omitempty"`
+}
