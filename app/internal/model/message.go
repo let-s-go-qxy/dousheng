@@ -8,7 +8,7 @@ type Message struct {
 	CreateTime string `json:"create_time" gorm:"column:create_time"`
 }
 
-// CreateMessage
+// 创建消息
 func CreateMessage(message *RespMessage) (err error) {
 	err = g.MysqlDB.Table("messages").Create(message).Error
 	return
