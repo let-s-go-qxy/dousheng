@@ -24,6 +24,7 @@ type Comment struct {
 
 // GetCommentList查选该视频下的所有评论
 func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
+
 	// 调用model层comment的sql查询语句，根据视频id查询对应id的视频评论
 	commentsWithUserid := repository.FindCommentByVideo(videoId)
 	for _, commentWithUserid := range commentsWithUserid {

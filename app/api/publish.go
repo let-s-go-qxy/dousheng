@@ -2,13 +2,12 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"github.com/cloudwego/hertz/pkg/common/json"
 	"strconv"
 	"tiktok/app/internal/service/video"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	//"fmt"
 	"github.com/jinzhu/copier"
 	g "tiktok/app/global"
 	//"tiktok/app/internal/model"
@@ -33,7 +32,7 @@ func PublishList(c context.Context, ctx *app.RequestContext) {
 	resp := VideoListResponse{Response: Response{
 		StatusCode: g.StatusCodeOk, StatusMsg: "成功!!"},
 		VideoList: respVideoList}
-	marshal, _ := json.Marshal(respVideoList)
-	fmt.Println(string(marshal))
+	//marshal, _ := json.Marshal(respVideoList)
+	//fmt.Println(string(marshal))
 	ctx.JSON(consts.StatusOK, resp)
 }

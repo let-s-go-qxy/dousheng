@@ -88,5 +88,5 @@ func UserInfo(myId int, userId int) (Id, FollowCount, FollowerCount int, Name st
 	FollowCount = int(model.GetFollowCount(userDao.Id))
 	FollowerCount = int(model.GetFollowerCount(userDao.Id))
 	IsFollow = model.IsFollow(myId, userId)
-	return
+	return Id, FollowCount, FollowerCount, Name, IsFollow, err
 }
