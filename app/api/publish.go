@@ -9,8 +9,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-
 	"github.com/jinzhu/copier"
+	g "tiktok/app/global"
 	//"tiktok/app/internal/model"
 )
 
@@ -31,7 +31,7 @@ func PublishList(c context.Context, ctx *app.RequestContext) {
 
 	copier.Copy(&respVideoList, &videoList)
 	resp := VideoListResponse{Response: Response{
-		StatusCode: 0, StatusMsg: "成功!!"},
+		StatusCode: g.StatusCodeOk, StatusMsg: "成功!!"},
 		VideoList: respVideoList}
 	marshal, _ := json.Marshal(respVideoList)
 	fmt.Println(string(marshal))
