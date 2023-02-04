@@ -7,3 +7,9 @@ type Message struct {
 	Content    string `json:"content" gorm:"column:content"`
 	CreateTime string `json:"create_time" gorm:"column:create_time"`
 }
+
+// CreateMessage
+func CreateMessage(message *RespMessage) (err error) {
+	err = g.MysqlDB.Table("messages").Create(message).Error
+	return
+}
