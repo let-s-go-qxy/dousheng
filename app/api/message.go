@@ -44,8 +44,8 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 	copier.Copy(&respMessageList, &messageList)
 
 	resp := MessageListResponse{Response: Response{
-		StatusCode: 0,
-		StatusMsg:  "成功!!"},
+		StatusCode: g.StatusCodeOk,
+		StatusMsg:  "获取消息列表成功!!"},
 		MessageList: respMessageList}
 
 	marshal, _ := json.Marshal(respMessageList)
@@ -54,12 +54,17 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 }
 
 func GetMessageAction(c context.Context, ctx *app.RequestContext) {
-	toId, _ := strconv.Atoi(ctx.Query("to_user_id"))
-	action_type, _ := strconv.Atoi(ctx.Query("action_type"))
-	content, _ := strconv.Atoi(ctx.Query("content"))
-	fromId := m.GetFromId(toId)
+	userIDInterface, success := ctx.Get("user_id")
+	var userID int
+	if success {
+		userID = int(userIDInterface.(int))
+	} // 若不存在，userID默认为0
 
-	respmessage, err := service.MessgaeAction(message)
+	toId, _ := strconv.Atoi(ctx.Query("to_user_id"))
+	content := ctx.Query("content")
+	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
+
+	err := m.MessgaeAction(userID, toId, content, actionType)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
@@ -67,7 +72,7 @@ func GetMessageAction(c context.Context, ctx *app.RequestContext) {
 		})
 	}
 
-	resp := Response{StatusCode: 0, StatusMsg: "返回成功"}
+	resp := Response{StatusCode: g.StatusCodeOk, StatusMsg: "发送消息成功"}
 	ctx.JSON(consts.StatusOK, resp)
 
 }

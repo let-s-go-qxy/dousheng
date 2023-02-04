@@ -22,3 +22,7 @@ var (
 	FavoriteAction              = 1 //点赞
 	RequestCancelFavoriteAction = 2
 )
+
+var (
+	MessageSendEvent = 1 //发送消息
+)

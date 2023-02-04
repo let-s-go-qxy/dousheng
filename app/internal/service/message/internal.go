@@ -3,8 +3,8 @@ package message
 import (
 	"errors"
 	"github.com/jinzhu/copier"
+	g "tiktok/app/global"
 	"tiktok/app/internal/model"
-	repository "tiktok/app/internal/model"
 	"time"
 )
 
@@ -27,21 +27,20 @@ func GetFromId(toUserId int) (fromUserId int) {
 	return
 }
 
-func MessgaeAction(fromId int, toId int, content string, action_type int) (respmessage *RespMessage, err error) {
+func MessgaeAction(fromId int, toId int, content string, actionType int) (err error) {
 
-	msg := &repository.RespMessage{
+	msg := model.RespMessage{
 		ToId:       toId,
 		FromId:     fromId,
 		Content:    content,
 		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	if actionType == 1 {
-		msg, err = repository.CreateMessage(msg)
+	if actionType == g.MessageSendEvent {
+		err = model.CreateMessage(&msg)
 		if err != nil {
 			err = errors.New("发送消息失败: " + err.Error())
 		}
-
 	}
 	return
 }

@@ -47,7 +47,7 @@ func GetFromId(toUserId int) (fromUserId int) {
 }
 
 // CreateMessage
-func CreateMessage(message *RespMessage) (respmessage *RespMessage, err error) {
-	g.MysqlDB.Table("message").Debug().Create(&message)
-
+func CreateMessage(message *RespMessage) (err error) {
+	err = g.MysqlDB.Table("messages").Create(message).Error
+	return
 }
