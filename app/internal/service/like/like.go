@@ -39,10 +39,10 @@ func FavoriteAction(userId int, videoId int, action int) error {
 			}
 		} else {
 			//2 未缓存
-			// 从数据库拉取最新的点赞列表,并缓存到数据库中
+			// 从数据库拉取用户的点赞列表,并缓存到redis中中
 			videoIdList := like.GetFavoriteVideoIdList(userId)
 			for _, value := range videoIdList {
-				if _, err := g.DbVideoLike.LPush(g.RedisContext, strUserId, value).Result(); err != nil {
+				if _, err := g.DbVideoLike.SAdd(g.RedisContext, strUserId, value).Result(); err != nil {
 					g.Logger.Error("方法：favoriteAction执行失败 %v", err)
 					// 防止脏读
 					g.DbVideoLike.Del(g.RedisContext, strUserId)

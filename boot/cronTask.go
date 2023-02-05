@@ -7,7 +7,7 @@ import (
 
 func CronTaskSetUp() {
 	c := cron.New()
-	c.AddJob("0 */3 * * * ?", api.LikeCacheToDBJob)
+	c.AddJob("0/30 * * * * ?", api.LikeCacheToDBJob)
 	go c.Start()
 	defer c.Stop()
 }
