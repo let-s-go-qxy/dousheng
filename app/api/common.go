@@ -18,20 +18,21 @@ type User struct {
 
 // Video 视频返回模型
 type Video struct {
-	Id            int    `json:"id,omitempty"`
+	Id            int    `json:"id"`
 	Author        User   `json:"author"`
-	PlayUrl       string `json:"play_url" json:"play_url,omitempty"`
-	CoverUrl      string `json:"cover_url,omitempty"`
-	FavoriteCount int    `json:"favorite_count,omitempty"`
-	CommentCount  int    `json:"comment_count,omitempty"`
-	IsFavorite    bool   `json:"is_favorite,omitempty"`
+	PlayUrl       string `json:"play_url"`
+	CoverUrl      string `json:"cover_url"`
+	FavoriteCount int    `json:"favorite_count"`
+	CommentCount  int    `json:"comment_count"`
+	IsFavorite    bool   `json:"is_favorite"`
+	Title         string `json:"title"`
 }
 
 type Comment struct {
 	Id         int    `json:"id,omitempty"`
 	User       User   `json:"user"`
 	Content    string `json:"content,omitempty"`
-	CreateDate string `json:"create_date,omitempty"`
+	CreateTime string `json:"create_date,omitempty"`
 }
 
 type Message struct {
@@ -65,4 +66,10 @@ type CommentResponse struct {
 	StatusCode int32   `json:"status_code"`
 	StatusMsg  string  `json:"status_msg,omitempty"`
 	Comment    Comment `json:"comment,,omitempty"`
+}
+
+type MessageResponse struct {
+	StatusCode int32   `json:"status_code"`
+	StatusMsg  string  `json:"status_msg,omitempty"`
+	Message    Message `json:"comment,,omitempty"`
 }

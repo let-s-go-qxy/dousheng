@@ -3,11 +3,14 @@ package api
 import (
 	"context"
 	"strconv"
-	"tiktok/app/internal/service"
+	"tiktok/app/internal/service/video"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	//"fmt"
 	"github.com/jinzhu/copier"
+	g "tiktok/app/global"
+	//"tiktok/app/internal/model"
 )
 
 type VideoListResponse struct {
@@ -20,18 +23,16 @@ func PublishList(c context.Context, ctx *app.RequestContext) {
 	//token
 	println("进入")
 	userId, _ := strconv.Atoi(ctx.Query("user_id"))
-	videoList, _ := service.GetPublicList(userId)
+
+	videoList, _ := video.GetPublicList(userId)
+
 	respVideoList := make([]Video, 0)
 
-	for _, video := range videoList {
-		respVideo := Video{}
-		copier.Copy(&respVideo, &video)
-		respVideo.FavoriteCount = 0
-		respVideo.CommentCount = 0
-		respVideo.IsFavorite = false
-		respVideoList = append(respVideoList, respVideo)
-	}
-
-	resp := VideoListResponse{Response: Response{StatusCode: 0, StatusMsg: "成功!!"}, VideoList: respVideoList}
+	copier.Copy(&respVideoList, &videoList)
+	resp := VideoListResponse{Response: Response{
+		StatusCode: g.StatusCodeOk, StatusMsg: "成功!!"},
+		VideoList: respVideoList}
+	//marshal, _ := json.Marshal(respVideoList)
+	//fmt.Println(string(marshal))
 	ctx.JSON(consts.StatusOK, resp)
 }

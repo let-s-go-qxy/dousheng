@@ -1,6 +1,8 @@
 package global
 
-import "errors"
+import (
+	"errors"
+)
 
 // 状态码
 var (
@@ -16,6 +18,11 @@ var (
 
 // 点赞和取消点赞
 var (
-	FavoriteAction       = 1 //点赞
-	CancelFavoriteAction = 0 //取消点赞
+	CancelFavoriteAction        = 0 //取消点赞
+	FavoriteAction              = 1 //点赞
+	RequestCancelFavoriteAction = 2
+)
+
+var (
+	MessageSendEvent = 1 //发送消息
 )

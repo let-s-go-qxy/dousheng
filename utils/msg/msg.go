@@ -4,10 +4,16 @@ package msg
 const (
 	HasNoVideoMsg            = "已经没有视频了"
 	GetVideoInfoSuccessMsg   = "获取视频信息成功"
+	GetVideoInfoErrorMsg     = "获取视频信息失败，出错了"
 	PublishVideoFailedMsg    = "上传视频失败"
 	PublishVideoSuccessMsg   = "上传视频成功"
 	GetPublishListFailedMsg  = "获取已发布视频失败"
 	GetPublishListSuccessMsg = "获取已发布视频成功"
+)
+
+const (
+	LikeFavoriteActionFail = "点赞失败"
+	LikeFavoriteActionSuccess
 )
 
 // JWT
