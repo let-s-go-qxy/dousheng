@@ -23,7 +23,10 @@ type VideoListResponse struct {
 func PublishList(c context.Context, ctx *app.RequestContext) {
 	//token
 	println("进入")
-	userId, _ := strconv.Atoi(ctx.Query("user_id"))
+	userId, err := strconv.Atoi(ctx.Query("user_id"))
+	if err != nil {
+		g.Logger.Error("用户ID错误")
+	}
 
 	videoList, _ := video.GetPublicList(userId)
 
