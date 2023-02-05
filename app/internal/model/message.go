@@ -51,3 +51,15 @@ func CreateMessage(message *RespMessage) (err error) {
 	err = g.MysqlDB.Table("messages").Create(message).Error
 	return
 }
+
+// GetMsgLatest 获取最新的聊天记录  msgType 0为接收的信息，1为发送的信息
+func GetMsgLatest(userId, myId int) (msg string, msgType int) {
+	msgDao := new(RespMessage)
+	g.MysqlDB.Table("messages").Where("to_id = ? AND from_id = ?", userId, myId).
+		Or("to_id = ? AND from_id = ?", myId, userId).Order("create_time desc").First(msgDao)
+	if msgDao.ToId == userId {
+		msgType = 1
+	}
+	msg = msgDao.Content
+	return
+}

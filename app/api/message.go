@@ -6,6 +6,7 @@ import (
 	"strconv"
 	g "tiktok/app/global"
 	m "tiktok/app/internal/service/message"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/json"
@@ -42,6 +43,11 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 	respMessageList := make([]MergeMessage, 0)
 
 	copier.Copy(&respMessageList, &messageList)
+
+	for i, message := range respMessageList {
+		t, _ := time.ParseInLocation("2006-01-02 15:04:05", message.CreateTime, time.Local)
+		respMessageList[i].CreateTime = strconv.Itoa(int(t.Unix()))
+	}
 
 	resp := MessageListResponse{Response: Response{
 		StatusCode: g.StatusCodeOk,
