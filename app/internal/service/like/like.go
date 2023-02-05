@@ -171,7 +171,7 @@ func FavoriteAction(userId int, videoId int, action int) error {
 				return err
 			}
 
-			if _, err := g.DbVideoLike.LRem(g.RedisContext, strVideoId, 1, userId).Result(); err != nil {
+			if _, err := g.DbVideoLike.SRem(g.RedisContext, strVideoId, userId).Result(); err != nil {
 				g.Logger.Error("方法favoriteAction:video点赞插入执行失败 %v", err)
 				// 防止脏读
 				g.DbVideoLike.Del(g.RedisContext, strVideoId)
@@ -199,6 +199,7 @@ func GetVideoListByIdList(videoIdList []int) (videoList []repository.Video) {
 func GetFavoriteList(userId int) ([]repository.RespVideo, error) {
 	// 用户喜欢的视频ID列表
 	videoIdList, err := like.GetFavoriteVideoList(userId)
+
 	if err != nil {
 		return nil, err
 	}

@@ -193,17 +193,4 @@ func (like *Like) IsLike(userId int, videoId int) (b bool, err error) {
 			return res, nil
 		}
 	}
-
-	////=========
-	//videoIdList, err := like.GetFavoriteVideoList(userId)
-	//if err != nil {
-	//	return false, err
-	//}
-	//
-	//for _, value := range videoIdList {
-	//	if value == videoId {
-	//		return true, nil
-	//	}
-	//}
-	//return false, nil
 }
