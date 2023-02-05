@@ -2,10 +2,11 @@ package message
 
 import (
 	"errors"
-	"github.com/jinzhu/copier"
 	g "tiktok/app/global"
 	"tiktok/app/internal/model"
 	"time"
+
+	"github.com/jinzhu/copier"
 )
 
 func GetMessageList(toUserId int, fromUserId int) (respMessageList []model.RespMessage, err error) {
@@ -22,10 +23,12 @@ func GetMessageList(toUserId int, fromUserId int) (respMessageList []model.RespM
 
 }
 
+/*
 func GetFromId(toUserId int) (fromUserId int) {
 	fromUserId = model.GetFromId(toUserId)
 	return
 }
+*/
 
 func MessgaeAction(fromId int, toId int, content string, actionType int) (err error) {
 

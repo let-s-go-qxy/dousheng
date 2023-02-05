@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	//"fmt"
 	g "tiktok/app/global"
 )
 
@@ -38,13 +38,14 @@ func GetMessageList(toUserId int, fromUserId int) (respMessageList []RespMessage
 	return
 }
 
-func GetFromId(toUserId int) (fromUserId int) {
+/*func GetFromId(toUserId int) (fromUserId int) {
 	g.MysqlDB.Table("messages").Select("from_id").
 		Where("to_id = ?", toUserId).
 		Find(&fromUserId)
 	fmt.Printf("%d", fromUserId)
 	return
 }
+*/
 
 // 创建消息
 func CreateMessage(message *RespMessage) (err error) {

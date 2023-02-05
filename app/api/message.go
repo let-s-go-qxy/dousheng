@@ -27,7 +27,6 @@ type MessageListResponse struct {
 }
 
 func GetMessageList(c context.Context, ctx *app.RequestContext) {
-	//token鉴权
 
 	//获取to_user_id和user_id
 
@@ -36,7 +35,11 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		g.Logger.Error("获取对方ID错误")
 	}
 
-	fromId := m.GetFromId(toId)
+	userIdInterface, success := ctx.Get("user_id")
+	var fromId int
+	if success {
+		fromId = int(userIdInterface.(int))
+	} // 若不存在，userID默认为0
 
 	messageList, _ := m.GetMessageList(toId, fromId)
 
@@ -60,17 +63,18 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 }
 
 func GetMessageAction(c context.Context, ctx *app.RequestContext) {
+
 	userIDInterface, success := ctx.Get("user_id")
-	var userID int
+	var fromId int
 	if success {
-		userID = int(userIDInterface.(int))
+		fromId = int(userIDInterface.(int))
 	} // 若不存在，userID默认为0
 
 	toId, _ := strconv.Atoi(ctx.Query("to_user_id"))
 	content := ctx.Query("content")
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
 
-	err := m.MessgaeAction(userID, toId, content, actionType)
+	err := m.MessgaeAction(fromId, toId, content, actionType)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
