@@ -44,6 +44,7 @@ func UserLogin(name, password string) (userId int, token string, err error) {
 	return
 }
 
+// UserRegister 用户注册
 func UserRegister(name, password string) (userId int, token string, err error) {
 	if JudgeNameAndPassword(name, password) == false {
 		err = errors.New("账号或密码不符合要求")

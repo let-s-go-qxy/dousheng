@@ -51,6 +51,7 @@ func UserRegister(c context.Context, ctx *app.RequestContext) {
 			StatusCode: g.StatusCodeFail,
 			StatusMsg:  err.Error(),
 		})
+		return
 	}
 	ctx.JSON(consts.StatusOK, UserLoginResponse{
 		Response: Response{
