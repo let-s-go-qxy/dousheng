@@ -31,9 +31,9 @@ func InitRouter(h *server.Hertz) {
 	publicGroup.GET("/comment/list/", api.GetCommentList)       // 查看视频评论列表
 	loggedGroup.POST("/comment/action/", api.PostCommentAction) // 修改视频评论
 	loggedGroup.POST("/relation/action/", api.PublishVideo)
-	loggedGroup.GET("/relation/follow/list/", api.GetFollowerList)
+	loggedGroup.GET("/relation/follow/list/", api.GetFollowList)
 	loggedGroup.GET("/relation/follower/list/", api.GetFollowerList)
-	loggedGroup.GET("/relation/friend/list/", api.GetFollowerList)
+	loggedGroup.GET("/relation/friend/list/", api.GetFriendList)
 	loggedGroup.GET("/message/chat/", api.GetMessageList)
 	loggedGroup.POST("/message/action/", api.GetMessageAction)
 
