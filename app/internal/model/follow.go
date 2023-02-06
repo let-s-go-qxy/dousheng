@@ -1,6 +1,9 @@
 package model
 
-import g "tiktok/app/global"
+import (
+	"gorm.io/gorm"
+	g "tiktok/app/global"
+)
 
 type Follow struct {
 	Id       int `gorm:"primaryKey" json:"id"`
@@ -68,4 +71,22 @@ func GetFollowerCount(userId int) (count int64) {
 func IsFollow(userId, followId int) bool {
 	err := g.MysqlDB.First(&Follow{}, "user_id = ? AND follow_id = ? AND cancel = ?", userId, followId, 1).Error
 	return err == nil
+}
+
+// CreateOrUpdateFollow 新增或更新记录
+func CreateOrUpdateFollow(myId, userId, followType int) error {
+	follow := new(Follow)
+	// 如果有记录更新记录，没有新增记录
+	if err := g.MysqlDB.First(follow, "user_id = ? AND follow_id = ?", myId, userId).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return err
+		}
+		follow.UserId = myId
+		follow.FollowId = userId
+		follow.Cancel = followType
+		return g.MysqlDB.Create(follow).Error
+	}
+	return g.MysqlDB.Model(follow).
+		Where("user_id = ? AND follow_id = ?", myId, userId).
+		Update("cancel", followType).Error
 }

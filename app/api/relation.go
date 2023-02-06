@@ -25,6 +25,25 @@ type UserAndMsgListResponse struct {
 	UserList []UserAndMsg `json:"user_list"`
 }
 
+// RelationAction 关注
+func RelationAction(c context.Context, ctx *app.RequestContext) {
+	toUserId, _ := strconv.Atoi(ctx.Query("to_user_id"))
+	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
+	myId, _ := ctx.Get("user_id")
+	err := ralation.RelationAction(myId.(int), toUserId, actionType)
+	if err != nil {
+		ctx.JSON(consts.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  err.Error(),
+		})
+		return
+	}
+	ctx.JSON(consts.StatusOK, Response{
+		StatusCode: 0,
+		StatusMsg:  "ok",
+	})
+}
+
 // GetFollowerList 获取粉丝列表
 func GetFollowerList(c context.Context, ctx *app.RequestContext) {
 	userId, _ := strconv.Atoi(ctx.Query("user_id"))
