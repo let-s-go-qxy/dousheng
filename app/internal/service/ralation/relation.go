@@ -20,6 +20,10 @@ type UserAndMsg struct {
 	MsgType int
 }
 
+func RelationAction(myId, toUserId, actionType int) error {
+	return model.CreateOrUpdateFollow(myId, toUserId, actionType)
+}
+
 // GetFollowList 获取关注者列表
 func GetFollowList(userId, myId int) (followUsers []User, err error) {
 	ids := model.GetFollowsByUserId(userId)
