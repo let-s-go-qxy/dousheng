@@ -28,8 +28,8 @@ func main() {
 			return
 		}
 		for _, key := range keys {
-			res, _ := g.DbUserLike.SMembers(g.RedisContext, key).Result()
-			fmt.Println(key, res)
+			g.DbUserLike.SMembers(g.RedisContext, key).Result()
+			//fmt.Println(key, res)
 		}
 		time.Sleep(time.Second * 3)
 	}

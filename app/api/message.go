@@ -2,14 +2,12 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	g "tiktok/app/global"
 	m "tiktok/app/internal/service/message"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/json"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/jinzhu/copier"
 )
@@ -57,8 +55,8 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		StatusMsg:  "获取消息列表成功!!"},
 		MessageList: respMessageList}
 
-	marshal, _ := json.Marshal(respMessageList)
-	fmt.Println(string(marshal))
+	//marshal, _ := json.Marshal(respMessageList)
+	//fmt.Println(string(marshal))
 	ctx.JSON(consts.StatusOK, resp)
 }
 
