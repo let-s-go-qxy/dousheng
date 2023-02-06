@@ -4,13 +4,6 @@ import (
 	"tiktok/app/global"
 )
 
-//tx := DB.Model(new(ProblemBasic)).Preload("ProblemCategories").Preload("ProblemCategories.CategoryBasic").
-//Where("title like ? OR content like ? ", "%"+keyword+"%", "%"+keyword+"%")
-//if categoryIdentity != "" {
-//tx.Joins("RIGHT JOIN problem_category pc on pc.problem_id = problem_basic.id").
-//Where("pc.category_id = (SELECT cb.id FROM category_basic cb WHERE cb.identity = ? )", categoryIdentity)
-//}
-
 func (*VideoDaoStruct) GetVideoFeed(latestTime int32) ([]VideoInfo, bool) {
 
 	var result []VideoInfo

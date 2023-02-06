@@ -2,11 +2,11 @@ package like
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jinzhu/copier"
 	"strconv"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
+	"tiktok/manifest/ossRelated"
 	"time"
 )
 
@@ -190,6 +190,8 @@ func GetVideoListByIdList(videoIdList []int) (videoList []repository.Video) {
 	for _, videoId := range videoIdList {
 		video := repository.Video{}
 		g.MysqlDB.Table("videos").Where("id = ?", videoId).Take(&video)
+		video.CoverUrl = ossRelated.OSSPreURL + video.CoverUrl + ".jpg"
+		video.PlayUrl = ossRelated.OSSPreURL + video.PlayUrl + ".mp4"
 		videoList = append(videoList, video)
 	}
 	return
@@ -257,6 +259,6 @@ func VideoFavoriteCount(videoId int) int {
 func IsLike(userId, videoId int) (b bool) {
 	//like.VideoId = videoId
 	b, _ = like.IsLike(userId, videoId)
-	fmt.Println(userId, videoId, b)
+	//fmt.Println(userId, videoId, b)
 	return
 }
