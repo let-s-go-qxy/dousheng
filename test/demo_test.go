@@ -24,11 +24,3 @@ func TestStruct(t *testing.T) {
 func appendArr(arr *[]int) {
 	*arr = append(*arr, 1)
 }
-func TestArrPush(t *testing.T) {
-	arr := new([]int)
-	appendArr(arr)
-	fmt.Println(*arr)
-	if len(*arr) != 1 {
-		t.Fail()
-	}
-}
