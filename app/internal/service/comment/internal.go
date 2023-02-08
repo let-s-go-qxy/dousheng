@@ -23,13 +23,13 @@ type Comment struct {
 }
 
 // GetCommentList查选该视频下的所有评论
-func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
+func GetCommentList(videoId, myId int) (comments []Comment, videoCommentCount int) {
 
 	// 调用model层comment的sql查询语句，根据视频id查询对应id的视频评论
-	commentsWithUserid := repository.FindCommentByVideo(videoId)
-	for _, commentWithUserid := range commentsWithUserid {
+	commentsWithVideoId := repository.FindCommentByVideo(videoId)
+	for _, commentWithVideoId := range commentsWithVideoId {
 		commentWithUser := Comment{}
-		userid, followCount, followerCount, name, isFollow, err := user.UserInfo(commentWithUserid.UserId, commentWithUserid.UserId)
+		userid, followCount, followerCount, name, isFollow, err := user.UserInfo(myId, commentWithVideoId.UserId)
 		if err != nil {
 			err = errors.New("发表用户不存在: " + err.Error())
 		}
@@ -40,12 +40,12 @@ func GetCommentList(videoId int) (comments []Comment, vidoeCommentCount int) {
 			FollowerCount: followerCount,
 			IsFollow:      isFollow,
 		}
-		copier.Copy(&commentWithUser, &commentWithUserid)
+		copier.Copy(&commentWithUser, &commentWithVideoId)
 		commentWithUser.User = userDao
 		comments = append(comments, commentWithUser)
 	}
 	// 得到视频下的评论数
-	vidoeCommentCount = len(comments)
+	videoCommentCount = len(comments)
 	return
 }
 
@@ -85,6 +85,7 @@ func CommentAction(videoId int, actionType int, content string, commentId int, u
 		if err != nil {
 			err = errors.New("删除评论失败: " + err.Error())
 		}
+
 		comment = repository.FindCommentById(commentId)
 	}
 	return

@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/jinzhu/copier"
@@ -15,13 +14,18 @@ import (
 func GetCommentList(c context.Context, ctx *app.RequestContext) {
 	// 获取请求参数
 	videoId := ctx.Query("video_id")
+	userIDInterface, success := ctx.Get("user_id")
+	var userId int32
+	if success {
+		userId = int32(userIDInterface.(int))
+	} // 若不存在，userID默认为0
 	vid, err := strconv.Atoi(videoId)
 	if err != nil {
 		g.Logger.Error("视频ID错误")
 	}
 	// 1、通过video表查询对应主键服务；2、根据video主键作为查询条件，查询相应评论
-	comments, vidoeCommentCount := sc.GetCommentList(vid)
-	print(vidoeCommentCount)
+	comments, videoCommentCount := sc.GetCommentList(vid, int(userId))
+	print(videoCommentCount)
 	respCommentList := make([]Comment, 0)
 	for _, comment := range comments {
 		respComment := Comment{}
@@ -43,7 +47,6 @@ func PostCommentAction(c context.Context, ctx *app.RequestContext) {
 	// 获取userId
 	value, _ := ctx.Get("user_id")
 	userId := value.(int)
-	fmt.Print()
 	// 进行评论修改
 	comment, userDao, err := sc.CommentAction(videoId, actionType, commentText, commentId, userId)
 	if err != nil {

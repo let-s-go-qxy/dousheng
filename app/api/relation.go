@@ -78,7 +78,7 @@ func GetFollowerList(c context.Context, ctx *app.RequestContext) {
 	})
 }
 
-// GetFollowList 获取关注着列表
+// GetFollowList 获取关注者列表
 func GetFollowList(c context.Context, ctx *app.RequestContext) {
 	userId, _ := strconv.Atoi(ctx.Query("user_id"))
 	myId, _ := ctx.Get("user_id")
