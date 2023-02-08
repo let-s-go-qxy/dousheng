@@ -1,10 +1,8 @@
 package test
 
-
 import (
 	"fmt"
 	"testing"
-	g "tiktok/app/global"
 )
 
 type Video struct {
@@ -16,14 +14,38 @@ type Video struct {
 	Title       string `gorm:"column:title;not null" json:"title"`
 }
 
-func TestPublicList(t *testing.T){
-	var videoList []int
-	g.MysqlDB.Table("videos").Select("id").
-		Where("author_id= ? ", 1).
-		Scan(&videoList)
-	
-	for _,video := range videoList{
-		fmt.Println(video)
+func TestPublicList(t *testing.T) {
+	//var videoList []int
+	//g.MysqlDB.Table("videos").Select("id").
+	//	Where("author_id= ? ", 1).
+	//	Scan(&videoList)
+	//
+	//for _,video := range videoList{
+	//	fmt.Println(video)
+	//}
+	arr := []int{1, 9, 10, 30, 2, 5, 45, 8, 63, 234, 12}
+	fmt.Println(QuickSort(arr))
+}
+
+func QuickSort(arr []int) []int {
+	if len(arr) <= 1 {
+		return arr
 	}
-		
+	splitdata := arr[0]          //第一个数据
+	low := make([]int, 0, 0)     //比我小的数据
+	hight := make([]int, 0, 0)   //比我大的数据
+	mid := make([]int, 0, 0)     //与我一样大的数据
+	mid = append(mid, splitdata) //加入一个
+	for i := 1; i < len(arr); i++ {
+		if arr[i] < splitdata {
+			low = append(low, arr[i])
+		} else if arr[i] > splitdata {
+			hight = append(hight, arr[i])
+		} else {
+			mid = append(mid, arr[i])
+		}
+	}
+	low, hight = QuickSort(low), QuickSort(hight)
+	myarr := append(append(low, mid...), hight...)
+	return myarr
 }

@@ -2,14 +2,14 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/json"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/jinzhu/copier"
 	"strconv"
 	g "tiktok/app/global"
 	m "tiktok/app/internal/service/message"
-	"time"
-
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"github.com/jinzhu/copier"
 )
 
 type MergeMessage struct {
@@ -39,25 +39,16 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		fromId = int(userIdInterface.(int))
 	} // 若不存在，userID默认为0
 
-	messageSendList, _ := m.GetMessageList(toId, fromId)
-	messageReceiveList, _ := m.GetMessageList(fromId, toId)
-	messageList := append(messageSendList, messageReceiveList...)
+	messageList, _ := m.GetMessageList(toId, fromId)
 	respMessageList := make([]MergeMessage, 0)
-
 	copier.Copy(&respMessageList, &messageList)
-
-	for i, message := range respMessageList {
-		t, _ := time.ParseInLocation("2006-01-02 15:04:05", message.CreateTime, time.Local)
-		respMessageList[i].CreateTime = strconv.Itoa(int(t.Unix()))
-	}
-
 	resp := MessageListResponse{Response: Response{
 		StatusCode: g.StatusCodeOk,
 		StatusMsg:  "获取消息列表成功!!"},
 		MessageList: respMessageList}
 
-	//marshal, _ := json.Marshal(respMessageList)
-	//fmt.Println(string(marshal))
+	marshal, _ := json.Marshal(respMessageList)
+	fmt.Println(string(marshal))
 	ctx.JSON(consts.StatusOK, resp)
 }
 
@@ -73,7 +64,7 @@ func GetMessageAction(c context.Context, ctx *app.RequestContext) {
 	content := ctx.Query("content")
 	actionType, _ := strconv.Atoi(ctx.Query("action_type"))
 
-	err := m.MessgaeAction(fromId, toId, content, actionType)
+	err := m.MessageAction(fromId, toId, content, actionType)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,
