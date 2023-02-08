@@ -30,24 +30,26 @@ type RespMessage struct {
 	CreateTime string `json:"create_time"`
 }
 
-func GetMessageList(toUserId int, fromUserId int) (respMessageList []RespMessage) {
+func GetMessageList(messageId []int) (respMessageList []RespMessage) {
 
-	g.MysqlDB.Table("messages").
+	var message RespMessage
+	for _, id := range messageId {
+		g.MysqlDB.Table("messages").
+			Where("id = ?", id).
+			Scan(&message)
+		respMessageList = append(respMessageList, message)
+	}
+	return
+}
+
+func GetMessageIdList(toUserId int, fromUserId int) (messageId []int) {
+	g.MysqlDB.Table("messages").Select("id").
 		Where("from_id = ? and to_id = ?", fromUserId, toUserId).
-		Scan(&respMessageList)
+		Scan(&messageId)
 	return
 }
 
-/*func GetFromId(toUserId int) (fromUserId int) {
-	g.MysqlDB.Table("messages").Select("from_id").
-		Where("to_id = ?", toUserId).
-		Find(&fromUserId)
-	fmt.Printf("%d", fromUserId)
-	return
-}
-*/
-
-// 创建消息
+// CreateMessage 创建消息
 func CreateMessage(message *RespMessage) (err error) {
 	err = g.MysqlDB.Table("messages").Create(message).Error
 	return

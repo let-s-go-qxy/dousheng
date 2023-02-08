@@ -2,8 +2,11 @@ package message
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 	g "tiktok/app/global"
 	"tiktok/app/internal/model"
+	"tiktok/utils/sort"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -12,25 +15,33 @@ import (
 func GetMessageList(toUserId int, fromUserId int) (respMessageList []model.RespMessage, err error) {
 
 	var messageList []model.RespMessage
-	messageList = model.GetMessageList(toUserId, fromUserId)
+
+	messageSendIdList := model.GetMessageIdList(toUserId, fromUserId)
+	messageReceiveIdList := model.GetMessageIdList(fromUserId, toUserId)
+	messageIdList := append(messageSendIdList, messageReceiveIdList...)
+
+	messageIdList = sort.QuickSort(messageIdList)
+
+	messageList = model.GetMessageList(messageIdList)
 
 	for _, message := range messageList {
 		respMessage := model.RespMessage{}
 		copier.Copy(&respMessage, &message)
 		respMessageList = append(respMessageList, respMessage)
 	}
+
+	for i, message := range respMessageList {
+		t := time.Time{}
+		fmt.Println(message.CreateTime)
+		t, _ = time.ParseInLocation("2006-01-02T15:04:05Z07:00", message.CreateTime, time.Local)
+		fmt.Println(t)
+		respMessageList[i].CreateTime = strconv.Itoa(int(t.Unix()))
+	}
 	return
 
 }
 
-/*
-func GetFromId(toUserId int) (fromUserId int) {
-	fromUserId = model.GetFromId(toUserId)
-	return
-}
-*/
-
-func MessgaeAction(fromId int, toId int, content string, actionType int) (err error) {
+func MessageAction(fromId int, toId int, content string, actionType int) (err error) {
 
 	msg := model.RespMessage{
 		ToId:       toId,
