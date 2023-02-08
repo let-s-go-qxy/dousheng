@@ -39,8 +39,9 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		fromId = int(userIdInterface.(int))
 	} // 若不存在，userID默认为0
 
-	messageList, _ := m.GetMessageList(toId, fromId)
-
+	messageSendList, _ := m.GetMessageList(toId, fromId)
+	messageReceiveList, _ := m.GetMessageList(fromId, toId)
+	messageList := append(messageSendList, messageReceiveList...)
 	respMessageList := make([]MergeMessage, 0)
 
 	copier.Copy(&respMessageList, &messageList)
