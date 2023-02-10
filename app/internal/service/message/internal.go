@@ -50,7 +50,7 @@ func GetRabbitMQMessageList(userId int) (respMessageList []model.RespMessage, er
 	ch, _ := conn.Channel()
 	argumentsMap := map[string]interface{}{}
 	argumentsMap["x-max-length"] = 1
-	argumentsMap["x-overflow"] = "reject-publish"
+	argumentsMap["x-overflow"] = "drop-head"
 	q, _ := ch.QueueDeclare(
 		"message_list"+strUserId, // name
 		true,                     // durable
@@ -99,7 +99,7 @@ func GetRabbitMQMessageCurrent(userId int) (respMessageList []model.RespMessage,
 
 	argumentsMap := map[string]interface{}{}
 	argumentsMap["x-max-length"] = 1
-	argumentsMap["x-overflow"] = "reject-publish"
+	argumentsMap["x-overflow"] = "drop-head"
 	q, _ := ch.QueueDeclare(
 		"message_current"+strUserId, // name
 		true,                        // durable

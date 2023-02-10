@@ -22,7 +22,7 @@ func PublishMessageCurrentToMQ(strJsonMessageList string, rabbitMQQueueId int) e
 
 	argumentsMap := map[string]interface{}{}
 	argumentsMap["x-max-length"] = 1
-	argumentsMap["x-overflow"] = "reject-publish"
+	argumentsMap["x-overflow"] = "drop-head"
 	q, err := ch.QueueDeclare(
 		"message_current"+strRabbitMQQueueId, // name
 		true,                                 // durable
@@ -61,7 +61,7 @@ func PublishMessageListToMQ(strJsonMessageList string, rabbitMQQueueId int) erro
 
 	argumentsMap := map[string]interface{}{}
 	argumentsMap["x-max-length"] = 1
-	argumentsMap["x-overflow"] = "reject-publish"
+	argumentsMap["x-overflow"] = "drop-head"
 	q, err := ch.QueueDeclare(
 		"message_list"+strRabbitMQQueueId, // name
 		true,                              // durable
@@ -102,7 +102,7 @@ func ConsumeMessageInMQ(rabbitMQQueueId int) (respMessageList []RespMessage, err
 	ch, _ := conn.Channel()
 	argumentsMap := map[string]interface{}{}
 	argumentsMap["x-max-length"] = 1
-	argumentsMap["x-overflow"] = "reject-publish"
+	argumentsMap["x-overflow"] = "drop-head"
 	q, _ := ch.QueueDeclare(
 		"message_list"+strUserId, // name
 		true,                     // durable
