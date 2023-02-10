@@ -2,13 +2,12 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/json"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/jinzhu/copier"
 	"strconv"
 	g "tiktok/app/global"
+	"tiktok/app/internal/model"
 	m "tiktok/app/internal/service/message"
 )
 
@@ -39,7 +38,19 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		fromId = int(userIdInterface.(int))
 	} // 若不存在，userID默认为0
 
-	messageList, _ := m.GetMessageList(toId, fromId)
+	recordList, err := m.GetRabbitMQMessageList(fromId)
+	currentList, err := m.GetRabbitMQMessageCurrent(fromId)
+	allMessageList := append(recordList, currentList...)
+	messageList := []model.RespMessage{}
+	for _, message := range allMessageList {
+		if (message.ToId == toId && message.FromId == fromId) || (message.ToId == fromId && message.FromId == toId) {
+			messageList = append(messageList, message)
+		}
+	}
+	if err != nil {
+		g.Logger.Infof("GetRabbitMQMessageList时发生了错误！")
+	}
+	//messageList, _ := m.GetMessageList(toId, fromId)
 	respMessageList := make([]MergeMessage, 0)
 	copier.Copy(&respMessageList, &messageList)
 	resp := MessageListResponse{Response: Response{
@@ -47,9 +58,10 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 		StatusMsg:  "获取消息列表成功!!"},
 		MessageList: respMessageList}
 
-	marshal, _ := json.Marshal(respMessageList)
-	fmt.Println(string(marshal))
+	//marshal, _ := json.Marshal(respMessageList)
+	//fmt.Println(string(marshal))
 	ctx.JSON(consts.StatusOK, resp)
+
 }
 
 func GetMessageAction(c context.Context, ctx *app.RequestContext) {
