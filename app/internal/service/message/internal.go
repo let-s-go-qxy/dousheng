@@ -160,7 +160,7 @@ func MessageAction(fromId int, toId int, content string, actionType int) (err er
 
 	JsonMsg, err := json.Marshal(msg)
 	strJsonMsg := string(JsonMsg)
-	fmt.Println("strJsonMsg------->" + strJsonMsg)
+
 	//将消息写到userId对应的消息队列中去
 	//mq.PublishMessageCurrentToMQ(strJsonMsg, fromId)
 	//将消息写到ToId对应的消息队列中去

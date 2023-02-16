@@ -4,6 +4,7 @@ import (
 	"tiktok/app/internal/model"
 	"tiktok/app/internal/service/comment"
 	"tiktok/app/internal/service/like"
+	"tiktok/app/internal/service/user"
 	"tiktok/manifest/ossRelated"
 
 	"github.com/jinzhu/copier"
@@ -33,6 +34,7 @@ func PlusAuthor(userId int, videoList []model.Video) (respVideoList []model.Resp
 		author.FollowCount = int(model.GetFollowCount(int(video.Author)))
 		author.FollowerCount = int(model.GetFollowerCount(int(video.Author)))
 		author.IsFollow = model.IsFollow(userId, int(video.Author))
+		author.Avatar = user.GetAvatar(author.Id)
 		copier.Copy(&respVideo.Author, &author)
 		respVideo.PlayUrl = ossRelated.OSSPreURL + respVideo.PlayUrl + ".mp4"
 		respVideo.CoverUrl = ossRelated.OSSPreURL + respVideo.CoverUrl + ".jpg"

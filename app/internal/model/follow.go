@@ -19,6 +19,7 @@ type Author struct {
 	FollowCount   int    `json:"follow_count,omitempty"`
 	FollowerCount int    `json:"follower_count,omitempty"`
 	IsFollow      bool   `json:"is_follow"`
+	Avatar        string `json:"avatar"`
 }
 
 // GetFollowsByUserId  查所有的被关注者的id

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	g "tiktok/app/global"
 	repository "tiktok/app/internal/model"
+	"tiktok/app/internal/service/user"
 	"tiktok/manifest/ossRelated"
 	"time"
 )
@@ -238,6 +239,7 @@ func GetVideosAuthor(userId int, videoList []repository.Video) (videosAuthor map
 		author.FollowCount = int(repository.GetFollowCount(int(video.Author)))
 		author.FollowerCount = int(repository.GetFollowerCount(int(video.Author)))
 		author.IsFollow = repository.IsFollow(userId, int(video.Author))
+		author.Avatar = user.GetAvatar(author.Id)
 		videosAuthor[int(video.Id)] = author
 	}
 	return

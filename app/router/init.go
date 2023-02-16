@@ -35,7 +35,7 @@ func InitRouter(h *server.Hertz) {
 	loggedGroup.GET("/relation/follower/list/", api.GetFollowerList)               //
 	loggedGroup.GET("/relation/friend/list/", api.GetFriendList)                   //
 	loggedGroup.GET("/message/chat/", api.GetMessageList)                          //
-	loggedGroup.POST("/message/action/", api.GetMessageAction)                     //
+	loggedGroup.POST("/message/action/", api.PostMessageAction)                    //
 
 	// 路由注册成功log
 	g.Logger.Infof("initialize routers successfully")

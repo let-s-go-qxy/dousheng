@@ -64,7 +64,7 @@ func GetMessageList(c context.Context, ctx *app.RequestContext) {
 
 }
 
-func GetMessageAction(c context.Context, ctx *app.RequestContext) {
+func PostMessageAction(c context.Context, ctx *app.RequestContext) {
 
 	userIDInterface, success := ctx.Get("user_id")
 	var fromId int

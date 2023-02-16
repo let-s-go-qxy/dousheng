@@ -37,6 +37,7 @@ func GetVideoFeed(latestTime int64, userID int32) (nextTime int64, videoInfo []m
 			_, commentCount = comment.GetCommentList(int(videoInfoData.VideoID), int(userID))
 			favoriteCount = like.VideoFavoriteCount(int(videoInfoData.VideoID))
 			isFavorite = like.IsLike(int(userID), int(videoInfoData.VideoID))
+			avatarURL := user.GetAvatar(int(videoInfoData.UserID))
 
 			videoInfo[index] = model.TheVideoInfo{
 				ID: videoInfoData.VideoID,
@@ -46,6 +47,7 @@ func GetVideoFeed(latestTime int64, userID int32) (nextTime int64, videoInfo []m
 					FollowCount:   int(followCount),
 					FollowerCount: int(followerCount),
 					IsFollow:      isFollow,
+					Avatar:        avatarURL,
 				},
 				PlayUrl:       ossRelated.OSSPreURL + videoInfoData.PlayURL + ".mp4",
 				CoverUrl:      ossRelated.OSSPreURL + videoInfoData.CoverURL + ".jpg",

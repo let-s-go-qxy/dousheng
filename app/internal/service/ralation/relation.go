@@ -16,6 +16,7 @@ type User struct {
 	FollowCount   int
 	FollowerCount int
 	IsFollow      bool
+	Avatar        string `json:"avatar"`
 }
 
 type UserAndMsg struct {
@@ -34,6 +35,7 @@ func GetFollowList(userId, myId int) (followUsers []User, err error) {
 	for _, id := range ids {
 		user := new(User)
 		user.Id, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = userSerive.UserInfo(myId, id)
+		user.Avatar = userSerive.GetAvatar(user.Id)
 		if err != nil {
 			break
 		}
@@ -49,6 +51,7 @@ func GetFollowerList(userId, myId int) (followerUsers []User, err error) {
 	for _, id := range ids {
 		user := new(User)
 		user.Id, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = userSerive.UserInfo(myId, id)
+		user.Avatar = userSerive.GetAvatar(user.Id)
 		if err != nil {
 			break
 		}
@@ -104,6 +107,7 @@ func GetFriendList(myId int) (friends []UserAndMsg, err error) {
 	for _, id := range ids {
 		user := new(UserAndMsg)
 		user.Id, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = userSerive.UserInfo(myId, id)
+		user.Avatar = userSerive.GetAvatar(user.Id)
 		user.Message, user.MsgType = message.GetMsgLatest(id, myId)
 		if err != nil {
 			break
