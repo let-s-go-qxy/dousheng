@@ -45,7 +45,9 @@ func GetMessageList(toUserId int, fromUserId int) (respMessageList []model.RespM
 }
 
 func GetRabbitMQMessageList(userId int) (respMessageList []model.RespMessage, err error) {
-	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@10.211.55.4:5672/")
+	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@" +
+		g.RabbitMQServerAddress +
+		"/")
 	strUserId := strconv.Itoa(userId)
 	ch, _ := conn.Channel()
 	argumentsMap := map[string]interface{}{}
@@ -93,7 +95,9 @@ func GetRabbitMQMessageList(userId int) (respMessageList []model.RespMessage, er
 
 func GetRabbitMQMessageCurrent(userId int) (respMessageList []model.RespMessage, err error) {
 	strUserId := strconv.Itoa(userId)
-	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@10.211.55.4:5672/")
+	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@" +
+		g.RabbitMQServerAddress +
+		"/")
 
 	ch, _ := conn.Channel()
 

@@ -10,7 +10,9 @@ import (
 //指定MQ的Queue的Id 和strJsonMessageList 就能将和strJsonMessageList生产到对应的Queue中去
 func PublishMessageCurrentToMQ(strJsonMessageList string, rabbitMQQueueId int) error {
 	strRabbitMQQueueId := strconv.Itoa(rabbitMQQueueId)
-	conn, err := amqp.Dial("amqp://admin:Qd20010701.@10.211.55.4:5672/")
+	conn, err := amqp.Dial("amqp://admin:Qd20010701.@" +
+		g.RabbitMQServerAddress +
+		"/")
 	if err != nil {
 		return err
 	}
@@ -49,7 +51,9 @@ func PublishMessageCurrentToMQ(strJsonMessageList string, rabbitMQQueueId int) e
 }
 func PublishMessageListToMQ(strJsonMessageList string, rabbitMQQueueId int) error {
 	strRabbitMQQueueId := strconv.Itoa(rabbitMQQueueId)
-	conn, err := amqp.Dial("amqp://admin:Qd20010701.@10.211.55.4:5672/")
+	conn, err := amqp.Dial("amqp://admin:Qd20010701.@" +
+		g.RabbitMQServerAddress +
+		"/")
 	if err != nil {
 		return err
 	}
@@ -97,7 +101,9 @@ type RespMessage struct {
 
 //通过userId  到指定Queue中去消费
 func ConsumeMessageInMQ(rabbitMQQueueId int) (respMessageList []RespMessage, err error) {
-	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@10.211.55.4:5672/")
+	conn, _ := amqp.Dial("amqp://admin:Qd20010701.@" +
+		g.RabbitMQServerAddress +
+		"/")
 	strUserId := strconv.Itoa(rabbitMQQueueId)
 	ch, _ := conn.Channel()
 	argumentsMap := map[string]interface{}{}
