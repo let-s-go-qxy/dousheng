@@ -101,7 +101,6 @@ func UserInfo(myId int, userId int) (Id, FollowCount, FollowerCount int, Name st
 
 // GetAvatar 获取用户头像
 func GetAvatar(userID int) string {
-
 	strUserID := strconv.Itoa(userID)
 	avatarURL := ossRelated.OSSAvatarPreURL + strUserID + "_avatar.jpg"
 	return avatarURL
