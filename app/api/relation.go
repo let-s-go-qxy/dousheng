@@ -3,10 +3,12 @@ package api
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/json"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/jinzhu/copier"
 	"strconv"
 	"tiktok/app/internal/service/ralation"
+	"tiktok/utils/mq"
 )
 
 type UserListResponse struct {
@@ -114,8 +116,16 @@ func GetFollowList(c context.Context, ctx *app.RequestContext) {
 
 // GetFriendList 获取好友列表 同时获取最新的聊天记录
 func GetFriendList(c context.Context, ctx *app.RequestContext) {
+
 	myId, _ := ctx.Get("user_id")
 	friendUsers, err := ralation.GetFriendList(myId.(int))
+
+	allFriendsMessageList, _ := ralation.GetAllFriendsMessageList(myId.(int))
+	marshal, _ := json.Marshal(allFriendsMessageList)
+	//将allFriendsMessageList所有的朋友的聊天记录放到消息队列中去
+	strJson := string(marshal)
+
+	err = mq.PublishMessageListToMQ(strJson, myId.(int))
 	if err != nil {
 		ctx.JSON(consts.StatusOK, UserListResponse{
 			Response: Response{

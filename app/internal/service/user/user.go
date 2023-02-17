@@ -6,7 +6,9 @@ import (
 	"strconv"
 	g "tiktok/app/global"
 	"tiktok/app/internal/model"
+	"tiktok/manifest/ossRelated"
 	utils2 "tiktok/utils"
+	"tiktok/utils/file"
 	"time"
 )
 
@@ -69,6 +71,11 @@ func UserRegister(name, password string) (userId int, token string, err error) {
 		return
 	}
 	userId = user.Id
+
+	success := file.UploadAvatar(userId)
+	if !success {
+		g.Logger.Infof("上传用户头像失败！")
+	}
 	token = GenerateToken(*user)
 	return
 }
@@ -93,7 +100,8 @@ func UserInfo(myId int, userId int) (Id, FollowCount, FollowerCount int, Name st
 }
 
 // GetAvatar 获取用户头像
-func GetAvatar(id string) string {
-	return id + "_avatar.jpg"
-	return "https://tupian.qqw21.com/article/UploadPic/2021-3/20213132143582028.jpg"
+func GetAvatar(userID int) string {
+	strUserID := strconv.Itoa(userID)
+	avatarURL := ossRelated.OSSAvatarPreURL + strUserID + "_avatar.jpg"
+	return avatarURL
 }

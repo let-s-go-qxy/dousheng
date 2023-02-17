@@ -26,3 +26,7 @@ var (
 var (
 	MessageSendEvent = 1 //发送消息
 )
+
+var (
+	RabbitMQServerAddress = "106.13.39.69"
+)

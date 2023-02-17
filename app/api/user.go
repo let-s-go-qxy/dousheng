@@ -27,7 +27,7 @@ func UserInfo(c context.Context, ctx *app.RequestContext) {
 	var err error
 	myID, _ := ctx.Get("user_id")
 	_, user.FollowCount, user.FollowerCount, user.Name, user.IsFollow, err = userService.UserInfo(myID.(int), user.Id)
-	user.Avatar = userService.GetAvatar(myID.(string))
+	user.Avatar = userService.GetAvatar(user.Id)
 	if err != nil {
 		ctx.JSON(consts.StatusOK, Response{
 			StatusCode: g.StatusCodeFail,

@@ -14,6 +14,7 @@ type User struct {
 	FollowCount   int    `json:"follow_count"`
 	FollowerCount int    `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow"`
+	Avatar        string `json:"avatar"`
 }
 type Comment struct {
 	Id         int    `json:"id,omitempty"`
@@ -39,6 +40,7 @@ func GetCommentList(videoId, myId int) (comments []Comment, videoCommentCount in
 			FollowCount:   followCount,
 			FollowerCount: followerCount,
 			IsFollow:      isFollow,
+			Avatar:        user.GetAvatar(userid),
 		}
 		copier.Copy(&commentWithUser, &commentWithVideoId)
 		commentWithUser.User = userDao
@@ -62,6 +64,7 @@ func CommentAction(videoId int, actionType int, content string, commentId int, u
 		FollowCount:   followCount,
 		FollowerCount: followerCount,
 		IsFollow:      isFollow,
+		Avatar:        user.GetAvatar(userid),
 	}
 	// 填装Comment数据
 	com := &repository.Comment{

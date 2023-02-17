@@ -48,6 +48,7 @@ type AuthorInfo struct {
 	FollowCount   int    `json:"follow_count"`
 	FollowerCount int    `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow"`
+	Avatar        string `json:"avatar"`
 }
 
 type GetVideoResponse struct {
