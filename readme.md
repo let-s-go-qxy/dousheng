@@ -20,17 +20,23 @@ dousheng
 
 ### 快速开始
 
+```
 git clone https://github.com/let-s-go-qxy/dousheng.git
+```
 
 #### 下载依赖
 
+```
 go mod tidy
+```
 
 ##### 运行
 
+```
 go build tiktok
 
 go run tiktok
+```
 
 ### 技术选型
 
